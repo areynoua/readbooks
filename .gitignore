@@ -9,6 +9,9 @@ wp-content/themes/twenty*/
 
 # IDE + User file
 .*
+backupDatabase.sh
+
+# Default Wordpress file
 index.php
 license.txt
 submitSummary.txt
