@@ -1,0 +1,83 @@
+.cld-header {
+    background: #258ef7;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.cld-settings-section-wrap {
+    background: #fff;
+    min-height: 370px;
+    margin-top: 20px;
+    padding:20px
+}
+span.cld-avatar-holder {
+    float: right;
+    margin-top: -31px;
+    margin-right: -14px;
+}
+.cld-clear {
+    clear: both;
+}
+.cld-field-wrap {
+    margin-bottom: 20px;
+}
+.cld-field-wrap > label {
+    display: inline-block;
+    font-weight: 500;
+    width: 250px;
+    vertical-align: top;
+}
+.cld-field {
+    display: inline-block;
+}
+.cld-each-template-preview {
+    margin-top: 20px;
+}
+.cld-field input[type="text"] {
+    width: 500px;
+}
+span.cld-avatar-holder img {
+    border: 2px solid #f1f1f1;
+    margin-top: -1px;
+    margin-right: -1px;
+}
+.cld-header h3{color:#fff;}
+.cld-info-wrap {
+    background: #257924;
+    color: #fff;
+    position: fixed;
+    top: 32px;
+    left: 45%;
+    padding: 10px;
+}
+img.cld-loader {
+    margin-right: 10px;
+    vertical-align: middle;
+    margin-top: -3px;
+}
+.cld-close-info {
+    margin-left: 20px;
+    cursor: pointer;
+}
+span.cld-preview-holder {
+    width: 50px;
+    display: block;
+    vertical-align: top;
+    margin-top: 10px;
+}
+span.cld-preview-holder img {
+    max-width: 100% !important;
+}
+.cld-separator {
+    border-bottom: 1px solid #bbb;
+    padding: 10px;
+}
+.cld-settings-section-wrap pre {
+    border-left: 5px solid #258ef7;
+    background: #eee;
+    padding: 5px;
+}
+.cld-fixed-height {
+    height: 300px;
+    overflow-y: scroll;
+}

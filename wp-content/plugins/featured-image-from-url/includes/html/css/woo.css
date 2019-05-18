@@ -1,0 +1,7 @@
+.woocommerce .products ul, .woocommerce ul.products {
+    margin: 0 0 0em;
+}
+
+img.zoomImg {
+    display:<?php echo fifu_woo_zoom(); ?> !important; 
+}
