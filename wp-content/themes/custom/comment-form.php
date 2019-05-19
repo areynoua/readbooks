@@ -2,7 +2,7 @@
 <?php
     $commenter = wp_get_current_commenter();
     $id = get_the_ID();
-    $allow_comment_reviews = get_theme_mod("allow_comment_reviews")
+    $allow_comment_reviews = get_theme_mod("allow_comment_reviews");
     $default_review_cat = get_theme_mod("mp_reviews_cat");
 
     if(isset($commenter['comment_author_website'])) {

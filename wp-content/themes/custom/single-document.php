@@ -43,9 +43,13 @@ $len_content = 200;
 			<div></div>
         </header>
 
-        <article <?php post_class("clearfix"); ?>>
-            <?php the_content(); ?>
-        </article>
+        <div><br />
+            <?php foreach (get_list_category_of_document($post->ID) as $category) {
+                echo '<span class="badge badge-pill category-button selective" data-selected="false" data-category="'.$category.'" style="background-color: ' . get_category_color($category) . ';">' . $category .'</span>';
+            }?>
+            <br />
+        </div>
+        
 <?php
 $args = array(
 	'post_parent' => $post->ID,
@@ -60,8 +64,9 @@ foreach ($children as $document_point) {
   $document_point_author_id = $document_point->post_author;
   $authorInfo = get_user_by('id', $document_point_author_id);
   $document_point_author_name = $authorInfo->data->display_name;
+  $listCategory = get_post_meta($document_point_id, 'category');
 ?>
-            <article class="clearfix summary">
+            <article class="clearfix summary document_point" data-category="<?php echo '[\''.implode('\',\'', $listCategory).'\']'; ?>">
 				<a href="<?php echo $document_point_link; ?>" class="title pre-title"><?php echo $document_point->post_title; ?></a>
                 <div class="feat-img">
                     <a href="<?php echo $document_point_link; ?>">
@@ -86,6 +91,12 @@ foreach ($children as $document_point) {
 
                     <?php echo wpc_avg_rating_custom(array('title' => 'Rating'), array('post_id' => $document_point_id)); ?>
 
+                    <div>
+                        <?php foreach ($listCategory as $category) {
+                            echo '<a href="#" style="border: 1px solid gray;border-radius: 15px; padding: 2px; margin: 5px;color: white;background-color: ' . get_category_color($category) . ';">' . $category .'</a>';
+                        } ?>
+                    </div>
+
 					<div class="read-more">
 						<a href="<?php echo $document_point_link; ?>">Read more</a>
 					</div>
@@ -97,7 +108,7 @@ foreach ($children as $document_point) {
 				<h2>
 					Add a point of interest
 				</h2>
-				<?php Ninja_Forms()->display(2); ?>
+				<?php Ninja_Forms()->display(7); ?>
 			</div>
 <?php	
 // DEBUG
@@ -129,12 +140,38 @@ foreach ($children as $document_point) {
 
 <script>
     function addInput() {
-        $('#nf-field-41-container').css('display', 'none');
-        jQuery( '#nf-field-41').val(<?php echo $post->ID; ?>).trigger( 'change' );
+        $('#nf-field-45-container').css('display', 'none');
+        jQuery( '#nf-field-45').val(<?php echo $post->ID; ?>).trigger( 'change' );
     }
 
     $(function() {
         setTimeout(addInput, 1000);
+    });
+
+
+
+    $.each($('.category-button.selective'), function(k, buttonValue) {
+        $(buttonValue).click(function() {
+            var category = $(this).data('category')
+            var selected = $(this).data('selected');
+
+            $(this).data('selected', !selected);
+
+
+            console.log('Select ' + category + " -> " + selected)
+            // Test if select or not
+            $.each($('article.document_point'), function(k, pointValue) {
+                pointValue = $(pointValue);
+                var listPointCategory = eval(pointValue.data('category'));
+                // If the category correspond and we unselect
+                if(listPointCategory.includes(category) && !selected) {
+                    pointValue.show();
+                // If the category doesn't correspond and we select
+                } else if(!listPointCategory.includes(category) && selected) {
+                    pointValue.hide();
+                }
+            }); 
+        });
     });
 
 </script>

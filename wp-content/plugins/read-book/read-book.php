@@ -35,10 +35,10 @@ function register_cpt_document() {
     );
  
     $args = array(
-	'label' => 'Documents',
+        'label' => 'Documents',
         'can_export' => true,
-        'capability_type' => array('document', 'documents'),
-	'delete_with_user' => false,
+        'capability_type' => 'post', // 'capability_type' => array('document', 'documents'),
+        'delete_with_user' => false,
         'description' => 'Documents for which users indicate points of interest',
         'exclude_from_search' => false,
         'has_archive' => true,
@@ -53,7 +53,7 @@ function register_cpt_document() {
         'show_in_menu' => true,
         'show_in_nav_menus' => true,
         'show_ui' => true,
-        'supports' => array('title', 'editor', 'thumbnail', 'trackbacks', 'custom-fields', 'revisions', 'page-attributes', 'author')//,
+        'supports' => array('title', 'thumbnail', 'trackbacks', 'custom-fields', 'revisions', 'page-attributes', 'author')//,
         //'taxonomies' => array('PublicationTypes', 'Theme')
     );
     register_post_type('document', $args );
@@ -125,7 +125,7 @@ function register_cpt_document_point() {
         'public' => true,
         'publicly_queryable' => true,
         'query_var' => true,
-        'rewrite' => array( "slug" => "document/%series_name%", "with_front" => true ),
+        'rewrite' => array( "slug" => "document/%document_name%", "with_front" => true ),
         'show_in_menu' => true,
         'show_in_nav_menus' => true,
         'show_ui' => true,
@@ -163,19 +163,19 @@ add_action( 'init', function() {
     add_rewrite_rule( '^document/(.*)/([^/]+)/?$','index.php?document_point=$matches[2]','top' );
 });
 
-add_filter('post_type_link', function( $link, $post ) {
-    if ('document_point' == get_post_type( $post ) ) {
+add_filter('post_type_link', function($link, $post) {
+    if ('document_point' == get_post_type($post)) {
         //Lets go to get the parent cartoon-series name
-        if( $post->post_parent ) {
-            $parent = get_post( $post->post_parent );
+        if($post->post_parent) {
+            $parent = get_post($post->post_parent);
             if( !empty($parent->post_name) ) {
-                return str_replace( '%series_name%', $parent->post_name, $link );
+                return str_replace( '%document_name%', $parent->post_name, $link );
             }
         } else {
             //This seems to not work. It is intented to build pretty permalinks
             //when episodes has not parent, but it seems that it would need
             //additional rewrite rules
-            return str_replace( '/%series_name%', '', $link );
+            return str_replace( '/%document_name%', '', $link );
         }
 
     }
@@ -222,9 +222,9 @@ function submit_document_point_callback($form_data) {
     */
 
     foreach($form_fields as $field){
-        $field_id    = $field['id'];
-        $field_key   = $field['key'];
-        $field_value = $field['value'];
+        // $field_id    = $field['id'];
+        // $field_key   = $field['key'];
+        // $field_value = $field['value'];
 
         switch ($field['key']) {
             case 'point_title':
@@ -256,13 +256,12 @@ function submit_document_point_callback($form_data) {
         );
 
     $insertElement = wp_insert_post($postarr);
-    update_post_meta($insertElement, 'point_approved', 0);
-    update_post_meta($insertElement, 'document_parent', $text_id);
+    add_post_meta($insertElement, 'point_approved', 0);
+    add_post_meta($insertElement, 'document_parent', $text_id);
     if(isset($point_category)) {
-        // foreach (explode(",", $point_category) as $category) {
-        //     $category
-        // }
-        
+        foreach (explode(",", $point_category) as $category) {
+            add_post_meta($insertElement, 'category', trim($category));
+        }
     }
 }
 
@@ -270,11 +269,12 @@ add_action('submit_document_point', 'submit_document_point_callback');
 
 
 
-function submit_book_callback($form_data) {
+function submit_document_callback($form_data) {
     global $GOOGLE_KEY;
     $form_fields   =  $form_data['fields'];
 
     /*
+    text_isbn_issn
     text_title
     text_author
     text_category
@@ -283,11 +283,15 @@ function submit_book_callback($form_data) {
     */
 
     foreach($form_fields as $field){
-        $field_id    = $field['id'];
-        $field_key   = $field['key'];
-        $field_value = $field['value'];
+        // $field_id    = $field['id'];
+        // $field_key   = $field['key'];
+        // $field_value = $field['value'];
 
         switch ($field['key']) {
+            case 'text_isbn_issn':
+                $text_isbn_issn = $field['value'];
+                break;
+
             case 'text_title':
                 $text_title = $field['value'];
                 break;
@@ -323,16 +327,23 @@ function submit_book_callback($form_data) {
         );
 
     $insertElement = wp_insert_post($postarr);
-    update_post_meta($insertElement, 'text_author', $text_author);
+    add_post_meta($insertElement, 'text_author', $text_author);
     if(isset($text_link)) {
-        update_post_meta($insertElement, 'text_link', $text_link);
+        add_post_meta($insertElement, 'text_link', $text_link);
+    }
+    if(isset($text_isbn_issn)) {
+        add_post_meta($insertElement, 'text_isbn_issn', $text_isbn_issn);
     }
 
-    // Doc: https://developers.google.com/books/docs/v1/using#ids
+    $googleUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
+    if(isset($text_isbn_issn)) {
+        $googleUrl .= 'isbn:' . urlencode($text_isbn_issn);
+    } else {
+        $googleUrl .= 'intitle:' . urlencode($text_title) . '+inauthor:' . urlencode($text_author);
+    }
+    $googleUrl .= '&key=' . $GOOGLE_KEY;
 
-    $googleUrl = 'https://www.googleapis.com/books/v1/volumes?q=intitle:' . urlencode($text_title) . 
-                            '+inauthor:' . urlencode($text_author) . 
-                            '&key=' . $GOOGLE_KEY;
+    // Doc: https://developers.google.com/books/docs/v1/using#ids
     $json = file_get_contents($googleUrl);
     $result = json_decode($json);
 
@@ -353,25 +364,23 @@ function submit_book_callback($form_data) {
                 }
 
                 if(isset($url)) {
-                    update_post_meta($insertElement, 'text_img', $url);
-                    update_post_meta($insertElement, 'fifu_image_url', fifu_convert($url));
-                    fifu_update_fake_attach_id($insertElement);
+                    add_post_meta($insertElement, 'text_img', $url);
                 } else {
-                    update_post_meta($insertElement, 'text_img_error', 'erreur URL');
+                    add_post_meta($insertElement, 'text_img_error', 'error URL');
                 }
 
                 if(isset($volumeInfo->infoLink)) {
-                    update_post_meta($insertElement, 'text_google_link', $volumeInfo->infoLink);
+                    add_post_meta($insertElement, 'text_google_link', $volumeInfo->infoLink);
                 }
                 
             }
         }
 
     } else {
-        update_post_meta($insertElement, 'text_img_error', 'erreur google ' . $googleUrl);
+        add_post_meta($insertElement, 'text_google_link', 'Google error: ' . $googleUrl);
     }
 }
-add_action('submit_book', 'submit_book_callback');
+add_action('submit_document', 'submit_document_callback');
 
 
 function listTermsToText($listTerms) {
@@ -479,3 +488,25 @@ class wpb_widget extends WP_Widget {
 } // Class wpb_widget ends here
 
 // function add_before_my_siderba
+
+
+
+
+//// CUSTOM FUNCTION ////
+
+function get_list_category_of_document($document_id) {
+    global $wpdb;
+    $request = $wpdb->prepare("SELECT DISTINCT meta_value " .
+        "FROM wp_postmeta " .
+            "JOIN wp_posts " .
+                " ON wp_posts.post_parent = %s " .
+        "WHERE meta_key = 'category' AND wp_postmeta.post_id = wp_posts.ID;", $document_id);
+    $listCategory = $wpdb->get_results($request, ARRAY_A);
+    return array_column($listCategory, 'meta_value');
+}
+
+function get_category_color($category_name) {
+    $listColor = array('#f44f4f', '#8ff44f', '#f4d84f', '#8585ff', '#db4ff4');
+    $num = ord(substr($category_name, 0, 1))%count($listColor);
+    return $listColor[$num];
+}

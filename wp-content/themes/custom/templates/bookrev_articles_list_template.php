@@ -4,18 +4,17 @@
         <div class="feat-img">
             <a href="<?php the_permalink(); ?>">
 				<?php 
-				if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
-					the_post_thumbnail('single-post-thumbnail');
-				}
-				else {
+                $img_url = get_post_meta($post->ID, 'text_img', true);
+                if(isset($img_url) && $img_url != "") {
+                    echo '<img src="'.$img_url.'">';
+                } else {
 					$def = get_theme_mod('default-article-image-upload');
 					if( !empty($def) ) {
 						echo '<img src="'.$def.'">';
-					}
-					else {
+					} else {
 						echo '<div class="no-img"><p>No preview</p></div>';
 					}
-				}
+                }
 				?>
             </a>
 <?php /*
