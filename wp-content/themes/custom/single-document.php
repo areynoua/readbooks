@@ -45,7 +45,13 @@ $len_content = 200;
 
         <div><br />
             <?php foreach (get_list_category_of_document($post->ID) as $category) {
-                echo '<span class="badge badge-pill category-button selective" data-selected="false" data-category="'.$category.'" style="background-color: ' . get_category_color($category) . ';">' . $category .'</span>';
+                $color = get_category_color($category);
+                echo '<span class="badge badge-pill category-button selective" ' . 
+                            'data-selected="false" data-category="'.$category.'" '.
+                            'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
+                        $category .
+                        ' <span class="unselect" style="display: none;">x</span>' .
+                    '</span>';
             }?>
             <br />
         </div>
@@ -148,30 +154,57 @@ foreach ($children as $document_point) {
         setTimeout(addInput, 1000);
     });
 
-
+    var listSelectCategory = []
 
     $.each($('.category-button.selective'), function(k, buttonValue) {
         $(buttonValue).click(function() {
             var category = $(this).data('category')
             var selected = $(this).data('selected');
 
-            $(this).data('selected', !selected);
+            switchCategory($(this))
 
+            // If the category was selected
+            if(selected) {
+                // remove this category
+                listSelectCategory.pop(category)
+            } else {
+                listSelectCategory.push(category)
+            }
 
-            console.log('Select ' + category + " -> " + selected)
+            console.log('Select ' + category + " -> " + selected + " [" + listSelectCategory + "]")
             // Test if select or not
             $.each($('article.document_point'), function(k, pointValue) {
                 pointValue = $(pointValue);
-                var listPointCategory = eval(pointValue.data('category'));
-                // If the category correspond and we unselect
-                if(listPointCategory.includes(category) && !selected) {
+
+                if(listSelectCategory.length > 0) {
+                    var listPointCategory = eval(pointValue.data('category'));
+                    // If one category of this document_point is in the listSelectCategory
+                    if($(listPointCategory).filter(listSelectCategory).size() == listSelectCategory.length) {
+                        pointValue.show();
+                    } else {
+                        pointValue.hide();
+                    }
+                } else {
                     pointValue.show();
-                // If the category doesn't correspond and we select
-                } else if(!listPointCategory.includes(category) && selected) {
-                    pointValue.hide();
                 }
             }); 
         });
     });
+
+    function switchCategory(categoryElement) {
+        var selected = categoryElement.data('selected');
+        categoryElement.data('selected', !selected);
+        if(selected) {
+            var color = categoryElement.css('color');
+            categoryElement.css('color', 'white');
+            categoryElement.css('background-color', color);
+            categoryElement.find('.unselect').hide();
+        } else {
+            var color = categoryElement.css('background-color');
+            categoryElement.css('color', color);
+            categoryElement.css('background-color', 'white');
+            categoryElement.find('.unselect').show();
+        }
+    }
 
 </script>
