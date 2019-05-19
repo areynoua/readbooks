@@ -8,6 +8,7 @@
 **/
 
 $GOOGLE_KEY = 'AIzaSyCclMD62R4J9hv6SSzPznRjpP6MNWtG6Sg';
+$PREVIEW_LEN = 200;
 
 ///////////////// POST TYPE /////////////////
 
@@ -308,7 +309,7 @@ function submit_document_point_callback($form_data) {
     add_post_meta($insertElement, 'document_parent', $text_id);
     if(isset($point_category)) {
         foreach (explode(",", $point_category) as $category) {
-            add_post_meta($insertElement, 'category', trim($category));
+            add_post_meta($insertElement, 'category', strtolower(trim($category)));
         }
     }
 }
@@ -359,6 +360,10 @@ function submit_document_callback($form_data) {
             case 'text_link':
                 $text_link = $field['value'];
                 break;
+
+            case 'text_date':
+                $text_date = $field['value'];
+                break;
         }
     }
 
@@ -376,6 +381,7 @@ function submit_document_callback($form_data) {
 
     $insertElement = wp_insert_post($postarr);
     add_post_meta($insertElement, 'text_author', $text_author);
+    add_post_meta($insertElement, 'text_date', $text_date);
     if(isset($text_link)) {
         add_post_meta($insertElement, 'text_link', $text_link);
     }
@@ -554,7 +560,65 @@ function get_list_category_of_document($document_id) {
 }
 
 function get_category_color($category_name) {
-    $listColor = array('#f44f4f', '#8ff44f', '#f4d84f', '#8585ff', '#db4ff4');
+    $listColor = array('#f44f4f', '#78d53d', '#f4d84f', '#8585ff', '#db4ff4');
     $num = ord(substr($category_name, 0, 1))%count($listColor);
     return $listColor[$num];
+}
+
+function get_post_score($postId) {
+    $args = array('post_id' => $postId);
+    
+    $comments = get_comments($args);
+    //var_dump($comments);
+    
+    $sum = 0;
+    $count=0;
+    
+    foreach($comments as $comment) :
+    
+        $approvedComment = $comment->comment_approved; 
+    
+        if($approvedComment > 0){  
+            $rates = get_comment_meta( $comment->comment_ID, 'rating', true );
+        }
+        if($rates){
+            $sum = $sum + (int)$rates;
+            $count++;
+        }
+    
+    endforeach;
+    if($count != 0){ 
+        $result = $sum/$count;
+    } else {
+        $result = 0;
+    }
+
+    return $result;
+}
+
+function order_post_by_score($listPost) {
+    $order_listPost = array();
+    $result_list = array();
+    foreach ($listPost as $key => $post) {
+        $result_list[$key] = get_post_score($post->ID);
+    }
+    arsort($result_list);
+    foreach ($result_list as $key => $value) {
+        $order_listPost[] = $listPost[$key];
+    }
+    return $order_listPost;
+}
+
+function format_preview_text($text) {
+    global $PREVIEW_LEN;
+    $text = str_replace('<br/>', ' ', $text);
+    $text = str_replace('<br>', ' ', $text);
+    $text = str_replace('</li>', ' ', $text);
+    $text = str_replace('</p>', ' ', $text);
+    $text = strip_tags($text);
+    $text = substr($text, 0, $PREVIEW_LEN);
+    if(strlen($text) > $PREVIEW_LEN) { 
+        $text .= '...'; 
+    }
+    return $text;
 }

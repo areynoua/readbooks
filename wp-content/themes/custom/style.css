@@ -335,6 +335,9 @@ Version: 1.0.0
 .category-button {
 	margin: 0px 3px;
 	color: white;
+}
+
+.category-button.selective {
 	cursor: pointer;
 }
 

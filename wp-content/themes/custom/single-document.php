@@ -1,55 +1,25 @@
-<?php
-$len_content = 200;
-?>
-
 <?php get_header(); ?>
-<!-- single-book Theme -->
+<!-- single-document Theme -->
 <section id="main-content" class="clearfix">
     <section id="main-content-inner" class="container">
     <div class="article-container post clearfix">
 
         <?php while ( have_posts() ) : the_post(); ?>
         <header class="book-metadata">
-            <h1 class="title pre-title"><?php the_title(); ?></h1>
-
-            <?php if(get_post_meta($post->ID, 'text_img', true) != "") : ?>
-            <img class="text-img" src="<?php echo get_post_meta($post->ID, 'text_img', true); ?>" />
-            <?php endif; ?>
-
-            <h1 class="title"><?php the_title(); ?></h1>
-
-            <div class="meta col-items">
-				<!-- TODO make clickable (category and theme) to make automaticaly a research -->
-                <div class="author">
-					<span><i class="fa fa-pencil"></i> Author:</span>
-					<span><a href="#"><?php echo get_post_meta($post->ID, 'text_author', true); ?></a></span>
-				</div>
-				<div class="date">
-					<span><i class="fa fa-calendar"></i> Publish date:</span>
-					<span><?php the_time( get_option( 'date_format' ) ); ?></span>
-				</div>
-				<div class="category">
-					<span><i class="fa fa-list"></i> Category:</span>
-					<span><?php echo listTermsToText(wp_get_post_terms($post->ID, "PublicationTypes")); ?></span>
-				</div>
-			    <div class="theme">
-					<span><i class="fa fa-tags"></i> Theme:</span>
-					<span><?php echo listTermsToText(wp_get_post_terms($post->ID, 'Theme')); ?></span>
-				</div>
-            </div>
-			<?php if(get_post_meta($post->ID, 'text_link', true) != "") { ?>
-			<span class="link"><a target="_blank" href="<?php echo get_post_meta($post->ID, 'text_link', true); ?>"><i class="fa fa-external-link"></i> Get the Text</a></span>
-			<?php } ?>
-			<div></div>
+            <?php 
+			$tmt = $post;
+			require("templates/readbook_text_metadata_template.php");
+			?>
         </header>
 
         <div><br />
+            Select categories: 
             <?php foreach (get_list_category_of_document($post->ID) as $category) {
                 $color = get_category_color($category);
                 echo '<span class="badge badge-pill category-button selective" ' . 
                             'data-selected="false" data-category="'.$category.'" '.
                             'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
-                        $category .
+                        ucfirst($category) .
                         ' <span class="unselect" style="display: none;">x</span>' .
                     '</span>';
             }?>
@@ -64,6 +34,7 @@ $args = array(
 	'post_status' => 'any' 
 );
 $children = get_children($args);
+$children = order_post_by_score($children);
 foreach ($children as $document_point) { 
   $document_point_id = $document_point->ID;
   $document_point_link = $document_point->guid;
@@ -92,14 +63,21 @@ foreach ($children as $document_point) {
                         </div><!-- end .meta -->
                     </header>
 					<div class="poi-content-excerpt">
-                    	<?php echo substr($document_point->post_content, 0, $len_content); if(strlen($document_point->post_content) > $len_content) { echo '...'; } ?>
+                        <?php echo format_preview_text($document_point->post_content); ?>
 					</div>
-
-                    <?php echo wpc_avg_rating_custom(array('title' => 'Rating'), array('post_id' => $document_point_id)); ?>
+                    <div>
+                        <?php echo wpc_avg_rating_custom(array('title' => 'Rating'), array('post_id' => $document_point_id)); ?>
+                    </div>
 
                     <div>
                         <?php foreach ($listCategory as $category) {
-                            echo '<a href="#" style="border: 1px solid gray;border-radius: 15px; padding: 2px; margin: 5px;color: white;background-color: ' . get_category_color($category) . ';">' . $category .'</a>';
+                            $color = get_category_color($category);
+                            echo '<span class="badge badge-pill category-button" ' . 
+                                        'data-selected="false" data-category="'.$category.'" '.
+                                        'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
+                                    ucfirst($category) .
+                                    ' <span class="unselect" style="display: none;">x</span>' .
+                                '</span>';
                         } ?>
                     </div>
 
@@ -144,16 +122,10 @@ foreach ($children as $document_point) {
 
 <?php get_footer(); ?>
 
+
+<script src="js/form_point_document.js"></script>
+
 <script>
-    function addInput() {
-        $('#nf-field-45-container').css('display', 'none');
-        jQuery( '#nf-field-45').val(<?php echo $post->ID; ?>).trigger( 'change' );
-    }
-
-    $(function() {
-        setTimeout(addInput, 1000);
-    });
-
     var listSelectCategory = []
 
     $.each($('.category-button.selective'), function(k, buttonValue) {

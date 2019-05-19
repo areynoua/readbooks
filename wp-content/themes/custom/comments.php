@@ -20,8 +20,58 @@
             <div id="comments-container">
 
                 <ul>
+                    <?php 
+                    $arg = array('post_id' => $post->ID, 'include_unapproved' => true, 'max_depth' => 2);
 
-                    <?php wp_list_comments('callback=book_rev_lite_comments'); ?>
+                    $listComments = get_comments($arg);
+                    
+
+                    // comment_parent
+                    $listCommentParent = array();
+                    $orderListCommentaire = array();
+                    foreach ($listComments as $key => $comment) {
+                        if($comment->comment_parent == 0) {
+                            $nbrLike = get_comment_meta($comment->comment_ID, 'cld_like_count', true);
+                            $nbrDislike = get_comment_meta($comment->comment_ID, 'cld_dislike_count', true);
+                            $score = $nbrLike-$nbrDislike;
+
+                            $orderListCommentaire[$key] = $score;
+                        } else {
+                            $listCommentParent[$comment->comment_parent] = array($key);
+                        }
+                    }
+                    arsort($orderListCommentaire);
+
+                    $arg = array(
+                                'walker' => '',
+                                'max_depth' => 2, 
+                                'style' => 'ul',
+                                'callback' => 'book_rev_lite_comments',
+                                'end-callback' => '',
+                                'type' => 'all',
+                                'page' => 0,
+                                'per_page' => 0,
+                                'avatar_size' => 32,
+                                'format' => xhtml,
+                                'echo' => 1);
+
+                    foreach ($orderListCommentaire as $key => $value) {
+                        $comment = $listComments[$key];
+                        $numChildren = array_key_exists($comment->comment_ID, $listCommentParent) ? count($listCommentParent[$comment->comment_ID]) : 0;
+                        $arg['has_children'] = $numChildren;
+                        book_rev_lite_comments($comment, $arg, 1);
+
+                        if($numChildren > 0) {
+                            echo '<ul class="children">';
+                            foreach ($listCommentParent[$comment->comment_ID] as $childrenKey) {
+                                $arg['has_children'] = '';
+                                book_rev_lite_comments($listComments[$childrenKey], $arg, 2);
+                            }
+                            echo '</ul>';
+                        }
+                    }
+                    ?>
+                    <?php // wp_list_comments('callback=book_rev_lite_comments'); ?>
 
                 </ul>
 

@@ -21,6 +21,11 @@ if ( !class_exists( 'CLD_Comments_Hooks' ) ) {
             if ( isset( $_REQUEST['comment'] ) ) {
                 return $comment_text;
             }
+
+            if($comment->comment_parent != 0) {
+                return $comment_text;
+            }
+
             /**
              * Don't implement on admin section
              *

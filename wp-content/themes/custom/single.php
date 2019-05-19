@@ -43,7 +43,6 @@
 
 
         <?php wp_link_pages(); ?>
-
         
 
         <?php endwhile; ?>

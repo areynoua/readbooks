@@ -3,7 +3,6 @@
 if(!function_exists('book_rev_lite_comments')) {
 
 	function book_rev_lite_comments($comment, $args, $depth) {
-
 			$GLOBALS['comment'] = $comment;
 
 			if(get_comment_type() == 'pingback' || get_comment_type() == 'trackback') : ?>

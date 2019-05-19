@@ -1,16 +1,11 @@
 <?php get_header(); ?>
-<!-- single-book_summary Theme -->
-
-
-
+<!-- single-document_point Theme -->
 <section id="main-content" class="clearfix">
-
     <section id="main-content-inner" class="container">
-
     <div class="article-container post clearfix">
 
         <?php while ( have_posts() ) : the_post(); ?>
-
+		<?php $tmt = get_post(get_post_meta($post->ID, "document_parent", true)); ?>
         <header class="clearfix">
 
             <div class="article-details summary-details">
@@ -44,13 +39,18 @@
             <?php if(get_post_meta($post->ID, 'text_img', true) != "") {
                 echo '<img class="text-img" src="' . get_post_meta($post->ID, 'text_img', true) . '" />';
             } ?>
-            <h2>Summary:</h2>
             <?php the_content(); ?>
-        
+            
         <div class="article-tags">
             Write by: <?php the_author(); ?>
         <?php the_tags( __( 'Tags: ', 'book-rev-lite' ), __( ', ', 'book-rev-lite' ), '<br />' ); ?> 
         </div>
+        <?php
+        if(wp_get_current_user()->data->ID == get_the_author_meta('ID')) {
+            echo '<a href="http://readbook.ddns.net/edit-point/?id='.$post->ID.'">Edit</a>';
+        }
+        ?>
+
 
         </article>
 
