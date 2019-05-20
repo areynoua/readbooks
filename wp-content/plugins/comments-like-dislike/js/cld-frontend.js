@@ -71,7 +71,9 @@ jQuery(document).ready(function ($) {
                             }
                             var cookie_name = 'cld_' + comment_id;
                             cld_setCookie(cookie_name, 1, 365);
-                            var latest_count = res.latest_count;
+                        }
+                        var latest_count = res.latest_count;
+                        if(latest_count != "" && latest_count != 0) {
                             selector.closest('.cld-common-wrap').find('.cld-count-wrap').html(latest_count);
                         }
                     }

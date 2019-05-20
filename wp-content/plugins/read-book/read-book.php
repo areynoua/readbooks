@@ -707,3 +707,21 @@ function user_registration_login_init () {
         exit;
     }
 }
+
+//// AUTHOR COMMENT ////
+
+function comment_form_before_callback() {
+    global $post;
+
+    if($post->post_author == get_current_user_id() && !isset($_GET['replytocom'])) {
+        echo '<div style="display:none;">';
+    } else {
+        echo '<div>';
+    }
+}
+add_action('comment_form_before', 'comment_form_before_callback');
+
+function comment_form_after_callback() {
+    echo '</div>';
+}
+add_action('comment_form_after', 'comment_form_after_callback');
