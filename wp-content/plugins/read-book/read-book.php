@@ -15,6 +15,7 @@ $APPROUVED_MIN_SCORE = 3;
 
 $MONEY_POINT_APPROUVED = 1; // In euro
 $MONEY_POINT_POSITIVE_COMMENT = 0.1;
+$MONEY_POSITIVE_COMMENT = 0.25;
 
 
 ///////////////// POST TYPE /////////////////
@@ -129,7 +130,7 @@ function register_cpt_document_point() {
         'hierarchical' => false,
         'labels' => $labels,
         'menu_icon' => 'dashicons-admin-comments',
-        'menu_position' => 5,
+        'menu_position' => 6,
         'public' => true,
         'publicly_queryable' => true,
         'query_var' => true,
@@ -147,6 +148,48 @@ function register_cpt_document_point() {
 add_action('init', 'register_cpt_document_point');
 
 
+function register_cpt_document_point_request() {
+ 
+    $labels = array(
+        'name' => _x('Point request', 'point_request'),
+        'singular_name' => _x('Point request', 'point_request'),
+        'add_new' => _x('Add New', 'point_request'),
+        'add_new_item' => _x('Add New Point to Document', 'point_request'),
+        'edit_item' => _x('Edit Document point', 'point_request'),
+        'new_item' => _x('New Point to a Document', 'point_request'),
+        'view_item' => _x('View Document point', 'point_request'),
+        'search_items' => _x( 'Search Document Point', 'point_request'),
+        'not_found' => _x('No document point found', 'point_request'),
+        'not_found_in_trash' => _x('No document point found in Trash', 'point_request'),
+        'parent_item_colon' => _x('Parent Document:', 'point_request'),
+        'menu_name' => _x('Document Point request', 'point_request'),
+    );
+ 
+    $args = array(
+        'can_export' => true,
+        'capability_type' => 'post',
+        'description' => 'Request to develop a relevant point of a document',
+        'exclude_from_search' => false,
+        'has_archive' => true, // Sure?
+        'hierarchical' => false,
+        'labels' => $labels,
+        'menu_icon' => 'dashicons-megaphone',
+        'menu_position' => 7,
+        'public' => true,
+        'publicly_queryable' => true,
+        'query_var' => true,
+        'rewrite' => array( "slug" => "doc/%document_name%", "with_front" => true ),
+        'show_in_menu' => true,
+        'show_in_nav_menus' => true,
+        'show_ui' => true,
+        'supports' => array('title', 'author', 'thumbnail', 'trackbacks', 
+            'custom-fields', 'revisions', 'page-attributes')
+    );
+ 
+    register_post_type('point_request', $args);
+}
+add_action('init', 'register_cpt_document_point_request');
+
 
 ///////////////// PARENT POST TYPE MANAGEMENT /////////////////
 
@@ -156,23 +199,34 @@ add_action('init', 'register_cpt_document_point');
 
 add_action('add_meta_boxes', function() {
     add_meta_box('document_point-parent', 'Document', 'document_point_attributes_meta_box', 'document_point', 'side', 'default');
+    add_meta_box('point_request-parent', 'Document', 'point_request_attributes_meta_box', 'point_request', 'side', 'default');
 });
 
 function document_point_attributes_meta_box($post) {
-        $pages = wp_dropdown_pages(array('post_type' => 'document', 'selected' => $post->post_parent, 
-            'name' => 'parent_id', 'show_option_none' => __('(no parent)'), 
-            'sort_column'=> 'menu_order, post_title', 'echo' => 0));
-        if ( ! empty($pages) ) {
-            echo $pages;
-        } // end empty pages check
+    $pages = wp_dropdown_pages(array('post_type' => 'document', 'selected' => $post->post_parent, 
+        'name' => 'parent_id', 'show_option_none' => __('(no parent)'), 
+        'sort_column'=> 'menu_order, post_title', 'echo' => 0));
+    if ( ! empty($pages) ) {
+        echo $pages;
+    } // end empty pages check
+}
+
+function point_request_attributes_meta_box($post) {
+    $pages = wp_dropdown_pages(array('post_type' => 'document', 'selected' => $post->post_parent, 
+        'name' => 'parent_id', 'show_option_none' => __('(no parent)'), 
+        'sort_column'=> 'menu_order, post_title', 'echo' => 0));
+    if ( ! empty($pages) ) {
+        echo $pages;
+    } // end empty pages check
 }
 
 add_action( 'init', function() {
     add_rewrite_rule( '^document/(.*)/([^/]+)/?$','index.php?document_point=$matches[2]','top' );
+    add_rewrite_rule( '^doc/(.*)/([^/]+)/?$','index.php?point_request=$matches[2]','top' );
 });
 
 add_filter('post_type_link', function($link, $post) {
-    if ('document_point' == get_post_type($post)) {
+    if ('document_point' == get_post_type($post) || 'point_request' == get_post_type($post) ) {
         //Lets go to get the parent cartoon-series name
         if($post->post_parent) {
             $parent = get_post($post->post_parent);
@@ -211,7 +265,7 @@ add_action('pre_get_posts','wpc_cpt_in_home');
 function wpc_cpt_in_search($query) {
     if (! is_admin() && $query->is_main_query()) {
         if ($query->is_search) {
-            $query->set('post_type', array('post', 'document_point', 'document'));
+            $query->set('post_type', array('post', 'document_point', 'document_point_request', 'document'));
         }
     }
 }
@@ -340,6 +394,7 @@ function submit_document_point_callback($form_data) {
     } else {
         $insertElement = wp_insert_post($postarr);
         add_post_meta($insertElement, 'point_approved', 0);
+        add_post_meta($insertElement, 'was_request', 0);
         add_post_meta($insertElement, 'document_parent', $text_id);
         if(isset($point_category)) {
             foreach (explode(",", $point_category) as $category) {
@@ -581,11 +636,14 @@ class wpb_widget extends WP_Widget {
 
 
 //// GIVE MONEY ////
+// Default: 0 €
 function user_register_callback($userId) {
     update_user_meta($userId, 'money', 0);
 }
 add_action('user_register', 'user_register_callback');
 
+// Give money if approuved
+//  OR if positive comment when approuved
 function comment_post_callback($comment_ID) {
     global $APPROUVED_MIN_COMMENT;
     global $APPROUVED_MIN_SCORE;
@@ -595,7 +653,7 @@ function comment_post_callback($comment_ID) {
     $infoComment = get_comment($comment_ID);
     $parentPost = $infoComment->comment_post_ID;
     $pointApproved = get_post_meta($parentPost, 'point_approved', true);
-    if($pointApproved == 0) {
+    if($pointApproved == 0) { // If not approuved, check to do it
         $numComment = count(get_comments(array('post_id' => $parentPost, 'parent' => 0)));
         
         if($numComment >= $APPROUVED_MIN_COMMENT and get_post_score($parentPost) >= $APPROUVED_MIN_SCORE) {
@@ -603,7 +661,7 @@ function comment_post_callback($comment_ID) {
             update_post_meta($parentPost, 'point_approved', 1);
             addUserMoney($parentPostInfo->post_author, $MONEY_POINT_APPROUVED);
         }
-    } else {
+    } else { // Check the rate
         $rates = get_comment_meta($comment_ID, 'rating', true);
         if($rates) {
             $rates = (int)$rates;
@@ -615,6 +673,17 @@ function comment_post_callback($comment_ID) {
     }
 }
 add_action('comment_post', 'comment_post_callback', 11);
+
+// Money if your comment is very like
+function comment_ranking_callback($comment_ID) {
+    global $MONEY_POSITIVE_COMMENT;
+    $like_count = get_comment_meta($comment_ID, 'cld_like_count', true );
+    if($like_count != "" && $like_count == 5) {
+        $infoComment = get_comment($comment_ID);
+        addUserMoney($infoComment->user_id, $MONEY_POSITIVE_COMMENT);
+    }
+}
+add_action('cld_after_ajax_process', 'comment_ranking_callback');
 
 
 //// CUSTOM FUNCTION ////

@@ -29,6 +29,10 @@
                 <br />
             </div>
         <?php } ?>
+
+        <div>
+            <input type="text" value="" placeholder="Search point of interest" />
+        </div>
         
 <?php
 $args = array(
@@ -94,13 +98,36 @@ foreach ($children as $document_point) {
                 </div><!-- end .content -->
             </article>
 			<?php } ?>
-		
-			<div class="form-container">
-				<h2>
-					Add a point of interest
-				</h2>
-				<?php Ninja_Forms()->display(7); ?>
-			</div>
+		      
+            <div class="form-container">
+                <ul class="tab">
+                    <li class="tablinks document_point" onclick="openTab(event, 'document_point')">
+                        <span class="active">
+                            Add a point of interest
+                        </span>
+                    </li>
+                    <li class="tablinks document_point_request" onclick="openTab(event, 'document_point_request')">
+                        <span>
+                            Request a point of interest
+                        </span>
+                    </li>
+                </ul>
+
+    			<div class="tabcontent" id="document_point" style="display: block;">
+    				<h2>
+    					Add a point of interest
+    				</h2>
+    				<?php Ninja_Forms()->display(7); ?>
+    			</div>
+
+                <div class="tabcontent" id="document_point_request">
+                    <h2>
+                        Request a point of interest
+                    </h2>
+                    <?php Ninja_Forms()->display(8); ?>
+                </div>
+            </div>
+
 <?php	
 // DEBUG
 //echo '<pre>';
@@ -134,7 +161,7 @@ foreach ($children as $document_point) {
 var postId = <?php echo $post->ID; ?>;
 </script>
 <script src="<?php echo get_template_directory_uri(). "/../custom/js/form_point_document.js"; ?>"></script>
-
+nf-field-53
 <script>
     var listSelectCategory = []
 
@@ -189,4 +216,18 @@ var postId = <?php echo $post->ID; ?>;
         }
     }
 
+</script>
+
+<script>
+function openTab(evt, tabName) {
+    $.each($('.tabcontent'), function(k, tabContent) {
+        $(tabContent).hide();
+    });
+    $.each($('.tablinks span'), function(k, tabLink) {
+        $(tabLink).removeClass('active');
+    });
+
+    $('.tabcontent#'+tabName).show();
+    $('.tablinks.'+tabName+' span').addClass('active');
+}
 </script>

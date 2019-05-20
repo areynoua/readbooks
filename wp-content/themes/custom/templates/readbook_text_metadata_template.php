@@ -1,12 +1,23 @@
 <!-- templates/readbook_text_metadata_template.php-->
 <?php $tmt_title = $tmt->post_title; ?>
-<h1 class="title pre-title"><?php echo $tmt_title; ?></h1>
+<h1 class="title pre-title"><?php echo $tmt_title; ?>
+</h1>
 
 <?php if(get_post_meta($tmt->ID, 'text_img', true) != "") : ?>
 	<img class="text-img" src="<?php echo get_post_meta($tmt->ID, 'text_img', true); ?>" />
 <?php endif; ?>
 
-<h1 class="title"><?php echo $tmt_title; ?></h1>
+<h1 class="title">
+	<?php 
+	if(isset($link_to_book) && $link_to_book) {
+		echo '<a href="' . get_site_url() . '/index.php?p=' . $tmt->ID . '">';
+		echo $tmt_title;
+		echo '</a>';
+	} else {
+		echo $tmt_title;
+	}
+	?>
+</h1>
 
 <div class="meta col-items">
 	<!-- TODO make clickable (category and theme) to make automaticaly a research -->

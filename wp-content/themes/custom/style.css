@@ -359,3 +359,39 @@ Version: 1.0.0
     padding-left: .6em;
     border-radius: 10rem;
 }
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.tab {
+	border-bottom: 1px solid #dee2e6;
+}
+
+ul.tab li {
+	display: inline-block;
+	cursor: pointer;
+    margin-bottom: 7px;
+}
+
+ul.tab li span {
+	color: #007bff;
+	border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    padding: .5rem 1rem;
+}
+
+ul.tab li span:hover {
+	border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+ul.tab li span.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+

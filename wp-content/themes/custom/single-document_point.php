@@ -9,6 +9,7 @@
         <header class="book-metadata">
             <?php 
 			$tmt = get_post(get_post_meta($post->ID, "document_parent", true));
+            $link_to_book = true;
 			require("templates/readbook_text_metadata_template.php");
 			?>
         </header>
