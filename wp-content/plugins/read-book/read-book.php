@@ -14,6 +14,7 @@ $APPROUVED_MIN_COMMENT = 5;
 $APPROUVED_MIN_SCORE = 3;
 
 $MONEY_POINT_APPROUVED = 1; // In euro
+$MONEY_POINT_POSITIVE_COMMENT = 0.1;
 
 
 ///////////////// POST TYPE /////////////////
@@ -268,7 +269,7 @@ add_filter('posts_distinct', 'cf_search_distinct');
 
 function submit_document_point_callback($form_data) {
     global $ninja_forms_processing;
-    $form_fields   =  $form_data['fields'];
+    $form_fields = $form_data['fields'];
 
     /*
     point_text
@@ -312,7 +313,7 @@ function submit_document_point_callback($form_data) {
             'post_status' => 'publish',
             'post_parent' => $text_id
         );
-    if(isset($point_id)) {
+    if(isset($point_id) && $point_id != "") {
         $postarr['ID'] = $point_id;
 
         if(get_post_meta($point_id, 'document_parent', true) != $text_id) {
@@ -540,7 +541,8 @@ class wpb_widget extends WP_Widget {
         } else {
             $text_title = 'Account';
             $text_text = "<p>You have: " . get_the_author_meta('money', get_current_user_id()) . "€</p>";
-            $text_text .= "<p><a href=\"" . get_site_url() . "/my-account\">Edit account</a></p>";
+            $text_text .= "<p><a href=\"" . get_site_url() . "/my-account\">Edit account</a> ".
+                    "<a href=\"" . get_site_url() . "/my-account/user-logout/\">Log out</a></p>";
         }
 
         $title = apply_filters('widget_title', $text_title);
@@ -587,32 +589,32 @@ add_action('user_register', 'user_register_callback');
 function comment_post_callback($comment_ID) {
     global $APPROUVED_MIN_COMMENT;
     global $APPROUVED_MIN_SCORE;
-
-    $fp = fopen('/var/www/html/readbook/wp-content/log.txt', 'w');
-    fwrite($fp, "Test\n");
+    global $MONEY_POINT_APPROUVED;
+    global $MONEY_POINT_POSITIVE_COMMENT;
 
     $infoComment = get_comment($comment_ID);
     $parentPost = $infoComment->comment_post_ID;
     $pointApproved = get_post_meta($parentPost, 'point_approved', true);
     if($pointApproved == 0) {
-        fwrite($fp, "Infos " . $comment_ID . "\n");
-
-        fwrite($fp, "Parent post:  " . $parentPost . "\n");
-        fwrite($fp, "Comment number OLD:  " . get_comments_number($parentPost) . "\n");
-
         $numComment = count(get_comments(array('post_id' => $parentPost, 'parent' => 0)));
-        fwrite($fp, "Comment number:  " . $numComment . "\n");
         
         if($numComment >= $APPROUVED_MIN_COMMENT and get_post_score($parentPost) >= $APPROUVED_MIN_SCORE) {
-            fwrite($fp, "Update parent:  " . $parentPost . "\n");
             $parentPostInfo = get_post($parentPost);
             update_post_meta($parentPost, 'point_approved', 1);
             addUserMoney($parentPostInfo->post_author, $MONEY_POINT_APPROUVED);
         }
-        fclose($fp);
+    } else {
+        $rates = get_comment_meta($comment_ID, 'rating', true);
+        if($rates) {
+            $rates = (int)$rates;
+            if($rates >= $APPROUVED_MIN_SCORE) {
+                $parentPostInfo = get_post($parentPost);
+                addUserMoney($parentPostInfo->post_author, $MONEY_POINT_POSITIVE_COMMENT);
+            }
+        }
     }
 }
-add_action('comment_post', 'comment_post_callback');
+add_action('comment_post', 'comment_post_callback', 11);
 
 
 //// CUSTOM FUNCTION ////
