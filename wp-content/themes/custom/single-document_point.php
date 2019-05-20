@@ -5,34 +5,12 @@
     <div class="article-container post clearfix">
 
         <?php while ( have_posts() ) : the_post(); ?>
-		<?php $tmt = get_post(get_post_meta($post->ID, "document_parent", true)); ?>
-        <header class="clearfix">
-
-            <div class="article-details summary-details">
                 
-                <h1 class="title"><?php the_title(); ?></h1>
-
-                <div class="meta col col-left">
-                    <span class="author"><i class="fa fa-pencil"></i> Author: <a href="#"><?php echo get_post_meta($post->ID, 'text_author', true); ?></a></span><br />
-                    <span class="date"><i class="fa fa-calendar"></i> Publish date: <?php the_time( get_option( 'date_format' ) ); ?></span>
-
-                </div>
-
-                <div class="meta col">
-                    <!-- TODO make clickable (category and theme) to make automaticaly a research -->
-                    <span class="category"><i class="fa fa-list"></i> Category: <?php echo listTermsToText(wp_get_post_terms($post->ID, "PublicationTypes")); ?></span><br />
-                    <span class="theme"><i class="fa fa-tags"></i> Theme: <?php echo listTermsToText(wp_get_post_terms($post->ID, 'Theme')); ?></span>
-                </div>
-
-                <div class="meta">
-                    <?php if(get_post_meta($post->ID, 'text_link', true) != "") { ?>
-                        <span class="link"><a target="_blank" href="<?php echo get_post_meta($post->ID, 'text_link', true); ?>"><i class="fa fa-external-link"></i> Link to have the book</a></span>
-                    <?php } ?>
-                </div>
-                <!-- end .meta -->
-
-            </div><!-- end .article-details -->  
-
+        <header class="book-metadata">
+            <?php 
+			$tmt = get_post(get_post_meta($post->ID, "document_parent", true));
+			require("templates/readbook_text_metadata_template.php");
+			?>
         </header>
 
         <article <?php post_class("clearfix"); ?>>

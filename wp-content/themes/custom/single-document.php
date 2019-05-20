@@ -12,19 +12,23 @@
 			?>
         </header>
 
-        <div><br />
-            Select categories: 
-            <?php foreach (get_list_category_of_document($post->ID) as $category) {
-                $color = get_category_color($category);
-                echo '<span class="badge badge-pill category-button selective" ' . 
-                            'data-selected="false" data-category="'.$category.'" '.
-                            'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
-                        ucfirst($category) .
-                        ' <span class="unselect" style="display: none;">x</span>' .
-                    '</span>';
-            }?>
-            <br />
-        </div>
+        <?php
+        $listCategory = get_list_category_of_document($post->ID);
+        if(!empty($listCategory)) { ?>
+            <div><br />
+                Select categories: 
+                <?php foreach ($listCategory as $category) {
+                    $color = get_category_color($category);
+                    echo '<span class="badge badge-pill category-button selective" ' . 
+                                'data-selected="false" data-category="'.$category.'" '.
+                                'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
+                            ucfirst($category) .
+                            ' <span class="unselect" style="display: none;">x</span>' .
+                        '</span>';
+                }?>
+                <br />
+            </div>
+        <?php } ?>
         
 <?php
 $args = array(
@@ -56,6 +60,9 @@ foreach ($children as $document_point) {
                 </div><!-- end .feat-img -->
                 <div class="content">
                     <header>
+                        <?php if(get_post_meta($document_point_id, 'point_approved', true) == 1) {
+                            echo '[V]';
+                        } ?>
                         <a href="<?php echo $document_point_link; ?>" class="title"><?php echo $document_point->post_title; ?></a>
                         <div class="meta">
                             <span class="author"><?php echo $document_point_author_name; ?></span>
@@ -123,7 +130,10 @@ foreach ($children as $document_point) {
 <?php get_footer(); ?>
 
 
-<script src="js/form_point_document.js"></script>
+<script>
+var postId = <?php echo $post->ID; ?>;
+</script>
+<script src="<?php echo get_template_directory_uri(). "/../custom/js/form_point_document.js"; ?>"></script>
 
 <script>
     var listSelectCategory = []

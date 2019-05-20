@@ -1,5 +1,9 @@
 <?php /* Template Name: FormTemplate */ ?>
 <?php get_header(); ?>
+<?php
+$postId = $_GET['id'];
+$postInfos = get_post($postId);
+?>
 <!-- Single Page Theme -->
 
 
@@ -26,12 +30,14 @@
             </div><!-- end .article-details -->  
 
         </header>
-
+        
         <article class="clearfix">
-            <?php
-            $postId = $_GET['id'];
-            $postInfos = get_post($postId);
+            <div>
+                <a href="http://readbook.ddns.net/index.php?p=<?php echo $postId; ?>">< Cancel</a><br />
+                <br />
+            </div>
 
+            <?php
             if(wp_get_current_user()->data->ID == $postInfos->post_author) {
                 the_content();
             } else {
@@ -70,7 +76,8 @@
 
 
 <script>
-var postId = <?php echo $postId; ?>;
+var postId = <?php echo $postInfos->post_parent; ?>;
+var pointId = <?php echo $postId; ?>;
 </script>
 <script src="<?php echo get_template_directory_uri(). "/../custom/js/form_point_document.js"; ?>"></script>
 

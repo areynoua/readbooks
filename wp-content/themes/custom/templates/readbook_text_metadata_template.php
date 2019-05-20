@@ -15,16 +15,19 @@
 		<span><a href="#"><?php echo get_post_meta($tmt->ID, 'text_author', true); ?></a></span>
 	</div>
 	<div class="date">
-		<span><i class="fa fa-calendar"></i> Publish date:</span>
-		<span><?php the_time( get_option( 'date_format' ) ); ?></span>
+		<span><i class="fa fa-calendar"></i> Publication date:</span>
+		<span><?php echo get_post_meta($tmt->ID, 'text_date', true); ?></span>
 	</div>
 	<div class="category">
 		<span><i class="fa fa-list"></i> Category:</span>
-		<span><?php echo listTermsToText(wp_get_post_terms($tmt->ID, "PublicationTypes")); ?></span>
+		<span><?php echo listTermsToText(wp_get_post_terms($tmt->ID, 'PublicationTypes')); ?></span>
 	</div>
 	<div class="theme">
 		<span><i class="fa fa-tags"></i> Theme:</span>
-		<span><?php echo listTermsToText(wp_get_post_terms($tmt->ID, 'Theme')); ?></span>
+		<span><?php echo listTermsToText(
+			wp_get_post_terms($tmt->ID, 'Theme'),
+			'<a href="' . get_site_url() . '/theme/%term%/">',
+			'</a>'); ?></span>
 	</div>
 </div>
 	<?php if(get_post_meta($tmt->ID, 'text_link', true) != "") { ?>

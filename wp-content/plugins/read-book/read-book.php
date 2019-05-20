@@ -10,6 +10,12 @@
 $GOOGLE_KEY = 'AIzaSyCclMD62R4J9hv6SSzPznRjpP6MNWtG6Sg';
 $PREVIEW_LEN = 200;
 
+$APPROUVED_MIN_COMMENT = 5;
+$APPROUVED_MIN_SCORE = 3;
+
+$MONEY_POINT_APPROUVED = 1; // In euro
+
+
 ///////////////// POST TYPE /////////////////
 
 function init_document() {
@@ -292,9 +298,12 @@ function submit_document_point_callback($form_data) {
                 $text_id = $field['value'];
                 break;
 
+            case 'point_id':
+                $point_id = $field['value'];
+                break;
+
         }
     }
-
 
     $postarr = array(
             'post_content' => $point_text,
@@ -303,19 +312,43 @@ function submit_document_point_callback($form_data) {
             'post_status' => 'publish',
             'post_parent' => $text_id
         );
+    if(isset($point_id)) {
+        $postarr['ID'] = $point_id;
 
-    $insertElement = wp_insert_post($postarr);
-    add_post_meta($insertElement, 'point_approved', 0);
-    add_post_meta($insertElement, 'document_parent', $text_id);
-    if(isset($point_category)) {
-        foreach (explode(",", $point_category) as $category) {
-            add_post_meta($insertElement, 'category', strtolower(trim($category)));
+        if(get_post_meta($point_id, 'document_parent', true) != $text_id) {
+            echo 'Error with parent ID !';
+            exit();
+        }
+
+        wp_update_post($postarr, true);
+        if (is_wp_error($post_id)) {
+            $errors = $post_id->get_error_messages();
+            foreach ($errors as $error) {
+                echo $error;
+            }
+            exit();
+        }
+        delete_post_meta($point_id, 'category');
+
+        if(isset($point_category)) {
+            foreach (explode(",", $point_category) as $category) {
+                add_post_meta($point_id, 'category', strtolower(trim($category)));
+            }
+        }
+
+    } else {
+        $insertElement = wp_insert_post($postarr);
+        add_post_meta($insertElement, 'point_approved', 0);
+        add_post_meta($insertElement, 'document_parent', $text_id);
+        if(isset($point_category)) {
+            foreach (explode(",", $point_category) as $category) {
+                add_post_meta($insertElement, 'category', strtolower(trim($category)));
+            }
         }
     }
+
 }
-
 add_action('submit_document_point', 'submit_document_point_callback');
-
 
 
 function submit_document_callback($form_data) {
@@ -437,13 +470,13 @@ function submit_document_callback($form_data) {
 add_action('submit_document', 'submit_document_callback');
 
 
-function listTermsToText($listTerms) {
+function listTermsToText($listTerms, $pre_markup = '', $post_markup = '') {
     $res = "";
     foreach ($listTerms as $term) {
         if($res != "") {
             $res .= ', ';
         }
-        $res .= $term->name;
+		$res .= str_replace('%term%',$term->name,$pre_markup) . $term->name . str_replace('%term%',$term->name,$post_markup);
     }
     return $res;
 }
@@ -544,6 +577,36 @@ class wpb_widget extends WP_Widget {
 // function add_before_my_siderba
 
 
+//// GIVE MONEY ////
+function comment_post_callback($comment_ID) {
+    global $APPROUVED_MIN_COMMENT;
+    global $APPROUVED_MIN_SCORE;
+
+    $fp = fopen('/var/www/html/readbook/wp-content/log.txt', 'w');
+    fwrite($fp, "Test\n");
+
+    $infoComment = get_comment($comment_ID);
+    $parentPost = $infoComment->comment_post_ID;
+    $pointApproved = get_post_meta($parentPost, 'point_approved', true);
+    if($pointApproved == 0) {
+        fwrite($fp, "Infos " . $comment_ID . "\n");
+
+        fwrite($fp, "Parent post:  " . $parentPost . "\n");
+        fwrite($fp, "Comment number OLD:  " . get_comments_number($parentPost) . "\n");
+
+        $numComment = count(get_comments(array('post_id' => $parentPost, 'parent' => 0)));
+        fwrite($fp, "Comment number:  " . $numComment . "\n");
+        
+        if($numComment >= $APPROUVED_MIN_COMMENT and get_post_score($parentPost) >= $APPROUVED_MIN_SCORE) {
+            fwrite($fp, "Update parent:  " . $parentPost . "\n");
+            update_post_meta($parentPost, 'point_approved', 1);
+            // addUserMoney(get_current_user_id(), $MONEY_POINT_APPROUVED);
+        }
+        fclose($fp);
+    }
+}
+
+add_action('comment_post', 'comment_post_callback');
 
 
 //// CUSTOM FUNCTION ////
@@ -621,4 +684,9 @@ function format_preview_text($text) {
         $text .= '...'; 
     }
     return $text;
+}
+
+function addUserMoney($userId, $moneyToAdd) {
+    $newMoneyValue = get_user_meta($userId, 'money', true) + $moneyToAdd;
+    update_user_meta($userId, 'money', $newMoneyValue);
 }
