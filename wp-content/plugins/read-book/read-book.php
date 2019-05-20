@@ -534,12 +534,13 @@ class wpb_widget extends WP_Widget {
         if(!is_user_logged_in()) {
             $text_title = 'Register/Login';
             $text_text = "<p style=\"text-align: center;\">" .
-                        "<a href=\"http://readbook.ddns.net/wp-login.php\">Login</a> " .
-                        "<a href=\"http://readbook.ddns.net/wp-login.php?action=register\">Register</a>".
+                        "<a href=\"" . get_site_url() . "/my-account\">Login</a> " .
+                        "<a href=\"" . get_site_url() . "/registration\">Register</a>".
                         "</p>";
         } else {
-            $text_title = 'Money';
+            $text_title = 'Account';
             $text_text = "<p>You have: " . get_the_author_meta('money', get_current_user_id()) . "€</p>";
+            $text_text .= "<p><a href=\"" . get_site_url() . "/my-account\">Edit account</a></p>";
         }
 
         $title = apply_filters('widget_title', $text_title);
@@ -578,6 +579,11 @@ class wpb_widget extends WP_Widget {
 
 
 //// GIVE MONEY ////
+function user_register_callback($userId) {
+    update_user_meta($userId, 'money', 0);
+}
+add_action('user_register', 'user_register_callback');
+
 function comment_post_callback($comment_ID) {
     global $APPROUVED_MIN_COMMENT;
     global $APPROUVED_MIN_SCORE;
@@ -599,13 +605,13 @@ function comment_post_callback($comment_ID) {
         
         if($numComment >= $APPROUVED_MIN_COMMENT and get_post_score($parentPost) >= $APPROUVED_MIN_SCORE) {
             fwrite($fp, "Update parent:  " . $parentPost . "\n");
+            $parentPostInfo = get_post($parentPost);
             update_post_meta($parentPost, 'point_approved', 1);
-            // addUserMoney(get_current_user_id(), $MONEY_POINT_APPROUVED);
+            addUserMoney($parentPostInfo->post_author, $MONEY_POINT_APPROUVED);
         }
         fclose($fp);
     }
 }
-
 add_action('comment_post', 'comment_post_callback');
 
 
@@ -689,4 +695,15 @@ function format_preview_text($text) {
 function addUserMoney($userId, $moneyToAdd) {
     $newMoneyValue = get_user_meta($userId, 'money', true) + $moneyToAdd;
     update_user_meta($userId, 'money', $newMoneyValue);
+}
+
+
+//// LOGIN ACCOUNT ////
+
+add_action('login_init', 'user_registration_login_init');
+function user_registration_login_init () {
+    if(!is_user_logged_in()) {
+        wp_redirect('/my-account');
+        exit;
+    }
 }
