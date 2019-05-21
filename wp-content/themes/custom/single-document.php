@@ -66,61 +66,9 @@
         if(count($childrenDocumentPoint) > 0) {
             echo '<h4>Point of interests</h4>';
         }
-        foreach ($childrenDocumentPoint as $document_point) { 
-            $document_point_id = $document_point->ID;
-            $document_point_link = $document_point->guid;
-            $document_point_author_id = $document_point->post_author;
-            $authorInfo = get_user_by('id', $document_point_author_id);
-            $document_point_author_name = $authorInfo->data->display_name;
-            $listCategory = get_post_meta($document_point_id, 'category'); ?>
-
-            <article class="clearfix summary document_point" data-category="<?php echo '[\''.implode('\',\'', $listCategory).'\']'; ?>">
-				<a href="<?php echo $document_point_link; ?>" class="title pre-title"><?php echo $document_point->post_title; ?></a>
-                <div class="feat-img">
-                    <a href="<?php echo $document_point_link; ?>">
-                        <?php echo get_avatar($document_point_author_id, 64); ?>
-                    </a>
-                    <div class="comment-count">
-                        <i class="fa fa-comments"></i>
-                        <?php echo $document_point->comment_count; ?>
-                    </div><!-- end .comment-count -->
-                </div><!-- end .feat-img -->
-                <div class="content">
-                    <header>
-                        <?php if(get_post_meta($document_point_id, 'point_approved', true) == 1) {
-                            echo '<span class="approved-icon" title="approved"><i class="fa fa-star"></i></span>';
-                        } ?>
-                        <a href="<?php echo $document_point_link; ?>" class="title"><?php echo $document_point->post_title; ?></a>
-                        <div class="meta">
-                            <span class="author"><?php echo $document_point_author_name; ?></span>
-                            <span class="date"><?php echo get_the_date(get_option('date_format'), $document_point_id); ?></span>
-                        </div><!-- end .meta -->
-                    </header>
-					<div class="poi-content-excerpt">
-                        <?php echo format_preview_text($document_point->post_content); ?>
-					</div>
-                    <div>
-                        <?php echo wpc_avg_rating_custom(array('title' => 'Rating'), array('post_id' => $document_point_id)); ?>
-                    </div>
-
-                    <div>
-                        <?php foreach ($listCategory as $category) {
-                            $color = get_category_color($category);
-                            echo '<span class="badge badge-pill category-button" ' . 
-                                        'data-selected="false" data-category="'.$category.'" '.
-                                        'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
-                                    ucfirst($category) .
-                                    ' <span class="unselect" style="display: none;">x</span>' .
-                                '</span>';
-                        } ?>
-                    </div>
-
-					<div class="read-more">
-						<a href="<?php echo $document_point_link; ?>">Read more</a>
-					</div>
-                </div><!-- end .content -->
-            </article>
-			<?php } ?>
+        foreach ($childrenDocumentPoint as $dpt) {
+			include "templates/readbook_poi_summary_template.php";
+		} ?>
 
             <?php
             if(!empty($childrenRequestPoint)) {
@@ -263,15 +211,10 @@ var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"
             // If the category was selected
             if(selected) {
                 // remove this category
-                console.log('before:')
-                console.log(listSelectCategory)
                 listSelectCategory.splice(listSelectCategory.indexOf(category), 1)
-                console.log('Pop:' + category)
             } else {
                 listSelectCategory.push(category)
             }
-
-            console.log('Select ' + category + " -> " + selected + " [" + listSelectCategory + "]")
             // Test if select or not
             hideOrShowPoint();
         });

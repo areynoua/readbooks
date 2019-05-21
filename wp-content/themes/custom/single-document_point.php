@@ -27,13 +27,28 @@
             
         <div class="article-tags">
             Written by: <?php the_author(); ?>
-        <?php the_tags( __( 'Tags: ', 'book-rev-lite' ), __( ', ', 'book-rev-lite' ), '<br />' ); ?> 
-        </div>
-        <?php
-        if(wp_get_current_user()->data->ID == get_the_author_meta('ID')) {
-            echo '<a href="'.get_site_url().'/edit-point/?id='.$post->ID.'">Edit</a>';
-        }
-        ?>
+            <?php the_tags( __( 'Tags: ', 'book-rev-lite' ), __( ', ', 'book-rev-lite' ), '<br />' ); ?> 
+            </div>
+            <?php
+            $listCategory = get_post_meta($post->ID, 'category');
+            if(!empty($listCategory)){
+                echo '<div>Categories: ';
+                    foreach ($listCategory as $category) {
+                        $color = get_category_color($category);
+                        echo '<span class="badge badge-pill category-button" ' . 
+                                    'data-selected="false" data-category="'.$category.'" '.
+                                    'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
+                                ucfirst($category) .
+                                ' <span class="unselect" style="display: none;">x</span>' .
+                            '</span>';
+                    }
+                echo '</div>';
+            }
+
+            if(wp_get_current_user()->data->ID == get_the_author_meta('ID')) {
+                echo '<a href="'.get_site_url().'/edit-point/?id='.$post->ID.'">Edit</a>';
+            }
+            ?>
 
 
         </article>

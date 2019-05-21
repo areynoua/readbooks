@@ -1,8 +1,29 @@
 <!-- templates/bookrev_loop_article_template.php -->
 <?php
-            $book_rev_lite_link = get_permalink(get_the_ID());
-            ?>
+$book_rev_lite_link = get_permalink(get_the_ID());
+
+if ($post->post_type == 'document') :
+?>
+<article class="clearfix book-metadata" id="post-<?php the_ID(); ?>">
+	<?php 
+	$tmt = $post;
+	$link_to_book = true;
+	$tmt_points_preview = true;
+	$tmt_cover_placeholder = true;
+	require("readbook_text_metadata_template.php");
+	?>
+</article>
+<?php
+else : if ($post->post_type == 'document_point') :
+
+	$dpt = $post;
+	$dpt_print_doc = true;
+	include "readbook_poi_summary_template.php";
+
+else :
+?>
             <article class="clearfix">
+				<pre><?php print_r($post); ?></pre>
 
                 <div class="feat-img">
 
@@ -62,3 +83,6 @@
                 </div><!-- end .content -->
 
             </article>
+<?php
+endif; endif;
+?>

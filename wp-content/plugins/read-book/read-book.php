@@ -698,10 +698,12 @@ class wpb_widget extends WP_Widget {
         echo $args['before_widget'];
         if(!is_user_logged_in()) {
             $text_title = 'Register/Login';
-            $text_text = '<p class="login-register-link">' .
-                         '<a class="login-link" href="' . get_site_url() . '/my-account">Login</a> ' .
-                         '<a class="register-link" href="' . get_site_url() . '/registration">Register</a>' .
-                         '</p>';
+            $text_text = '<div class="account-widget-content login-logout">'.
+                         '<p class="login-register-link">' .
+                             '<a class="login-link" href="' . get_site_url() . '/my-account">Login</a> ' .
+                             '<a class="register-link" href="' . get_site_url() . '/registration">Register</a>' .
+                         '</p>'.
+                         '</div>';
         } else {
             $text_title = 'Account';
 			$text_text = '<div class="account-widget-content">'

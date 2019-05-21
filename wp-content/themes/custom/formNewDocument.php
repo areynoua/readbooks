@@ -74,18 +74,31 @@ function addAutoComplete() {
         jQuery( "#log" ).scrollTop( 0 );
     }
 
-    function selectFunction(event, ui ) {
+    function selectFunction(event, ui) {
+        console.log("UI")
+        console.log(ui)
         var docInfo = ui.item.documentInfo;
 
         // console.log('ISBN: ' + docInfo.industryIdentifiers[0].identifier)
-        console.log('selected')
-        console.log(docInfo)
+        // console.log('selected')
+        // console.log(docInfo)
         jQuery('#nf-field-47').val(getIsbn(docInfo))
         jQuery('#nf-field-35').val(docInfo.title);
         jQuery('#nf-field-36').val(docInfo.authors.join(', '));
         jQuery('#nf-field-48').val(new Date(docInfo.publishedDate).getFullYear());
         // TODO !
-        // jQuery('#nf-field-?').val(docInfo.categories)
+
+        var listTheme = []
+        jQuery.each(docInfo.categories, function(key, selectTheme) {
+            console.log("Treat theme: " + selectTheme)
+            if(jQuery('#nf-field-38').find('option[value="' + selectTheme + '"]').size() == 0) {
+                jQuery('#nf-field-38').append(new Option(selectTheme, selectTheme));
+            }
+            listTheme.push(selectTheme)
+        });
+        jQuery('#nf-field-38').val(listTheme);
+
+        jQuery('#nf-field-39').val(docInfo.infoLink);
     }
 
     function getIsbn(bookInformation) {
@@ -99,14 +112,18 @@ function addAutoComplete() {
         return "";
     }
 
-    function successFetchGoogle(data) {
+    function successFetchGoogle(data, type) {
         console.log(data.items)
         var listResponse = []
         if(data.totalItems > 0) {
             jQuery.each(data.items, function(key, value) {
                 var objectInfo = {};
                 objectInfo.label = value.volumeInfo.title + " - " + getIsbn(value.volumeInfo);
-                objectInfo.value = "";
+                if(type == "title") {
+                    objectInfo.value = value.volumeInfo.title;
+                } else if(type == "isbn") {
+                    objectInfo.value = getIsbn(value.volumeInfo);
+                }
                 objectInfo.documentInfo = value.volumeInfo;
                 listResponse.push(objectInfo)
             });
@@ -114,6 +131,7 @@ function addAutoComplete() {
         return listResponse;
     }
 
+    // ISBN
     jQuery("#nf-field-47").autocomplete({
         source: function( request, response ) {
             jQuery.ajax( {
@@ -124,7 +142,7 @@ function addAutoComplete() {
                     key: '<?php echo $GOOGLE_KEY; ?>'
                 },
                 success: function( data ) {
-                    response(successFetchGoogle(data));
+                    response(successFetchGoogle(data, 'isbn'));
                 }
             } );
         },
@@ -132,6 +150,7 @@ function addAutoComplete() {
         select: selectFunction
     } );
 
+    // Title
     jQuery("#nf-field-35").autocomplete({
         source: function( request, response ) {
             jQuery.ajax( {
@@ -142,7 +161,7 @@ function addAutoComplete() {
                     key: '<?php echo $GOOGLE_KEY; ?>'
                 },
                 success: function( data ) {
-                    response(successFetchGoogle(data));
+                    response(successFetchGoogle(data, 'title'));
                 }
             } );
         },

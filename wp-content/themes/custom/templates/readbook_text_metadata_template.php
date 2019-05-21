@@ -22,7 +22,7 @@ $tmt_points = get_children(array(
 	'numberposts' => -1, 
 	'post_status' => 'any'
 ));
-$authorName = get_post_meta($tmt->ID, 'text_author', true);
+$listAuthor = explode(',', get_post_meta($tmt->ID, 'text_author', true));
 ?>
 <h1 class="title pre-title document-title"><?php echo $tmt_title; ?></h1>
 <?php if($link_to_book) echo $link_to_book; ?>
@@ -39,15 +39,40 @@ $authorName = get_post_meta($tmt->ID, 'text_author', true);
 	<!-- TODO make clickable (category and theme) to make automaticaly a research -->
 	<div class="author">
 		<span><i class="fa fa-pencil"></i> <span>Author:</span></span>
-		<span><a href="<?php echo get_site_url() . "/?s=" . $authorName; ?>"><?php echo $authorName; ?></a></span>
+		<span>
+			<?php 
+			$first = TRUE;
+			foreach ($listAuthor as $authorName) {
+				if(!$first) {
+					echo ', ';
+				}
+				echo '<a href="' .get_site_url() . "/?s=" . $authorName.'">'. $authorName. '</a>';
+				$first = FALSE;
+			} ?>
+			
+		</span>
 	</div>
 	<div class="date">
 		<span><i class="fa fa-calendar"></i> <span>Publication date:</span></span>
-		<span><?php echo get_post_meta($tmt->ID, 'text_date', true); ?></span>
+		<span><?php 
+			$publicationDate = get_post_meta($tmt->ID, 'text_date', true);
+			echo $publicationDate; 
+		?></span>
 	</div>
 	<div class="category">
 		<span><i class="fa fa-list"></i> <span>Category:</span></span>
 		<span><?php echo listTermsToText(wp_get_post_terms($tmt->ID, 'PublicationTypes')); ?></span>
+	</div>
+	<div class="date">
+		<span><i class="fa fa-calendar"></i> <span>First publication:</span></span>
+		<span><?php 
+			$firstPublish = get_post_meta($tmt->ID, 'text_first_date', true);
+			if($firstPublish != "") {
+				echo $firstPublish;
+			} else {
+				echo $publicationDate;
+			}
+		?></span>
 	</div>
 	<div class="theme">
 		<span><i class="fa fa-tags"></i> <span>Theme:</span></span>

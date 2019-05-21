@@ -421,12 +421,14 @@ ul.inner-nav {
 
 .skill-button {
     border-radius: 3px;
+    padding: 0.35em .4em;
 }
 
 .badge-pill>.unselect {
     color: white;
-    padding: 0px 3px;
+    padding: 0px 5px;
     border-radius: 40px;
+    font-size: 10px;
 }
 
 .tabcontent {
@@ -510,4 +512,13 @@ input.point-search {
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: .25rem;
+}
+
+.account-widget-content.login-logout {
+    text-align: center;
+}
+
+.account-widget-content.login-logout a {
+    margin-right: 2ch;
+    margin-left: 2ch;
 }
