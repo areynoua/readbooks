@@ -1,0 +1,71 @@
+/* CSS Document */
+
+.wpcsr_wrapper span {
+	display:inline-block;font-size: 12px;
+}
+.wpcsr_wrapper h3 {
+    background-color: #0085baab;
+    margin: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    width: 95%;
+    padding: 9px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 20px;
+    display: inline-block;
+}
+span#default {
+	font-size: 9px;
+    color: #7b7878;
+}
+.row-outer {
+	margin: 5px 0px;
+    float: left;
+    width: 100%;
+    padding: 15px 10px;
+}
+.left-area{
+    width: 95%;
+    float: left;
+    background-color: #fff;
+    padding: 5px 15px;
+    border: 1px solid #ccc;
+}
+.col-1 {
+	width:38%;
+	float:left;
+}
+.col-2 {
+	float:left;
+}
+.col-2 img{
+	vertical-align:middle;
+}
+.left-area p.submit{
+	clear:both;
+}
+.left-area .wp-picker-container .wp-color-result.button {
+    height: 28px;
+    margin: 0 6px 0px 0;
+}
+.col-2 .wp-picker-container .wp-color-result.button{
+	line-height: 25px;
+	box-shadow: 0 0px 0 #ccc;
+}
+.wpcsr_wrapper .tab-pane .row-outer:nth-child(even){background-color: #f5f5f5;} 
+.col-2 .wp-picker-container .wp-color-result-text{font-size: 11px;line-height: 26px;}
+.col-2 .averagerating_info{ font-style: italic; font-size: 11px;margin-bottom: 0;}
+.donate-message	{font-size: 11px;}
+.col-2 .imgrow{    margin-bottom: 5px;}
+.col-2 .imgrow input[type=radio]{    margin-top: 3px;}
+.col-2 .aggr_options {margin-bottom: 5px; display: inline-block;}
+.col-2 .aggr_options .aggr_label{font-size:11px;}
+.left-main-sec{ width: 70%; float: left;}
+.right-main-sec{ float: left;width:100%;}
+.wpcsr_wrapper .dashicons.dashicons-admin-generic{font-size: 21px;margin-right: 5px;}
+.wpcr_pagioptions .row-outer, .wpcr_pagioptions h3{padding-left:20px;}
+.wpcr_pagioptions h3{background-color: #d0cecb; margin-top: 0;padding-top: 10px; padding-bottom: 10px; color: #525050;}
+.wpcr_pagioptions .colright-1{display: inline-block; float: left;  margin-right: 15px;width: 30%;}
+.wpcr_pagioptions .colright-2{float: left;}

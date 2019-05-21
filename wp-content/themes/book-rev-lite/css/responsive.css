@@ -1,0 +1,332 @@
+/*------------------------------------------
+  Responsive Grid Media Queries - 1280, 1024, 768, 480
+   1280-1024   - desktop (default grid)
+   1024-768    - tablet landscape
+   768-480     - tablet 
+   480-less    - phone landscape & smaller
+--------------------------------------------*/
+@media all and (min-width: 1024px) and (max-width: 1280px) {
+	.container {
+		width: 1024px !important;
+	}
+
+	.article-container article .content {
+		width: 487px;
+	}
+}
+
+@media all and (min-width: 768px) and (max-width: 1024px) {
+	.container {
+		width: 768px !important;
+	}
+
+	#slider .slide .book-cover {
+		width: 27%;
+	}
+
+	#slider .slide .slide-description {
+		width: 70%;
+	}
+
+	#slider .sd-meta {
+		margin-top: 0;
+	}
+
+	.article-container {
+		width: 100%;
+	}
+
+	.article-container article .content {
+		width: 553px;
+	}
+
+	#main-sidebar {
+		float: left;
+		width: 100%;
+		margin-bottom: 20px;
+	}
+}
+
+@media all and (min-width: 480px) and (max-width: 768px) {
+	.container {
+		width: 480px !important;
+	}
+
+	#inner-header .logo {
+		display: block;
+		margin: 0 auto;
+		float: none;
+	}
+
+	.article-container {
+		width: 100%;
+	}
+
+	#main-sidebar {
+		float: left;
+		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	#main-footer .upper-footer .widget {
+		width: 100%;
+	}
+
+	#top-bar-search {
+		width: 100%;
+		margin: 15px auto;
+		margin-bottom: 0;
+	}
+
+	#top-bar {
+		padding: 20px;
+		height: 100%;
+		background: #1D1515;
+	}
+	#top-bar #top-bar-menu,
+	#top-bar #top-bar-menu li,
+	#top-bar #top-bar-menu ul,
+	.menu-top-bar-menu-container {
+		display: block;
+		width: 100%;
+	}
+
+	#top-bar #top-bar-menu li a {
+		display: block;
+		width: 100%;
+		border-bottom: 1px solid #362619;
+		text-align: center;
+	}
+
+	#top-bar #top-bar-menu li a:hover {
+		background: #362619;	
+	}
+
+	#main-menu nav {
+		width: 100%;
+	}
+
+	#main-menu nav ul {
+		display: none;
+	}
+
+	#main-menu select.main-dropdown {
+		display: block;
+		width: 100%;
+		float: none;
+		font-family: "Titillium Web", sans-serif;
+		padding: 5px 10px;
+		margin-bottom: 20px;
+	}
+
+	#main-menu #menu-social-icons {
+		float: none;
+		border: none;
+		padding: 0;
+		display: table;
+		margin: 0 auto;
+	}
+
+	#slider .slide .slide-description .tsh-left {
+		float: none;
+		width: 100%;
+		max-width: 100%;
+	}
+	.search-form {
+		width: 100%;
+	}
+	#slider .sd-meta {
+		padding: 5px;
+		margin-top: 0;
+	}
+
+	#slider .sd-meta span {
+		width: 100%;
+		display: block;
+		text-align: center;
+		margin: 0;
+	}
+
+	#slider .sd-meta .read-more {
+		display: none;
+	}
+
+	#slider .slide .slide-description .inner-sd {
+		padding: 10px 15px;
+	}
+
+	#slider .slide .slide-description .sd-title a {
+		font-size: 1.1em;
+	}
+
+	#slider .slide .book-cover {
+		display: none;
+	}
+
+	#slider .slide .slide-description .sd-title {
+		font-size: 18px;
+		line-height: 1;
+	}
+
+	#slider .slide .slide-description {
+		width: 100%;
+	}
+
+	#slider .slide .sd-body {
+		height: 160px;
+	}
+
+	.article-container article .feat-img {
+		float: none;
+		margin: 0 auto;
+	}
+
+	.article-container article .content {
+		width: 100%;
+		margin-top: 20px;
+	}
+
+}
+
+@media all and (max-width: 480px) {
+	.container {
+		width: 80% !important;
+	}
+
+	#inner-header .logo {
+		display: block;
+		margin: 0 auto;
+		float: none;
+	}
+
+	.article-container {
+		width: 100%;
+	}
+
+	#main-sidebar {
+		float: left;
+		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	#main-footer .upper-footer .widget {
+		width: 100%;
+	}
+
+	#top-bar-search {
+		width: 100%;
+		margin: 15px auto;
+		margin-bottom: 0;
+	}
+
+	#top-bar {
+		padding: 20px;
+		height: 100%;
+		background: #1D1515;
+	}
+	#top-bar #top-bar-menu,
+	#top-bar #top-bar-menu li,
+	#top-bar #top-bar-menu ul,
+	.menu-top-bar-menu-container {
+		display: block;
+		width: 100%;
+	}
+
+	#top-bar #top-bar-menu li a {
+		display: block;
+		width: 100%;
+		border-bottom: 1px solid #362619;
+		text-align: center;
+	}
+
+	#top-bar #top-bar-menu li a:hover {
+		background: #362619;	
+	}
+
+	#main-menu nav {
+		width: 100%;
+	}
+
+	#main-menu nav ul {
+		display: none;
+	}
+
+	#main-menu select.main-dropdown {
+		display: block;
+		width: 100%;
+		float: none;
+		font-family: "Titillium Web", sans-serif;
+		padding: 5px 10px;
+		margin-bottom: 20px;
+	}
+
+	#main-menu #menu-social-icons {
+		float: none;
+		border: none;
+		padding: 0;
+		display: table;
+		margin: 0 auto;
+	}
+
+	#slider .slide .slide-description .tsh-left {
+		float: none;
+		width: 100%;
+		max-width: 100%;
+	}
+	.search-form {
+		width: 100%;
+	}
+	#slider .sd-meta {
+		padding: 5px;
+		margin-top: 0;
+	}
+
+	#slider .sd-meta span {
+		width: 100%;
+		display: block;
+		text-align: center;
+		margin: 0;
+	}
+
+	#slider .sd-meta .read-more {
+		display: none;
+	}
+
+	#slider .slide .slide-description .inner-sd {
+		padding: 10px 15px;
+	}
+
+	#slider .slide .slide-description .sd-title a {
+		font-size: 1.1em;
+	}
+
+	#slider .slide .book-cover {
+		display: none;
+	}
+
+	#slider .slide .sd-body p {
+		font-size: 14px;
+	}
+
+	#slider .slide .slide-description .sd-title {
+		font-size: 18px;
+		line-height: 1;
+	}
+
+	#slider .slide .slide-description {
+		width: 100%;
+	}
+
+	#slider .slide .sd-body {
+		height: 163px;
+	}
+	.article-container article .feat-img {
+		float: none;
+		margin: 0 auto;
+	}
+
+	.article-container article .content {
+		width: 100%;
+		margin-top: 20px;
+	}
+}

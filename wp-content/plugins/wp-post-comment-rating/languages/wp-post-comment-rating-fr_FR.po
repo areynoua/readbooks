@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-16 20:42+0500\n"
+"PO-Revision-Date: 2019-02-16 22:02+0500\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+#: inc/admin-setting.php:4
+msgid "Settings"
+msgstr "Réglages"
+
+#: inc/admin-setting.php:14
+msgid "General"
+msgstr "Général"
+
+#: inc/admin-setting.php:15
+msgid "Stars"
+msgstr "Étoiles"
+
+#: inc/admin-setting.php:16 inc/admin-setting.php:151
+msgid "Tooltip"
+msgstr "Info-bulle"
+
+#: inc/admin-setting.php:17
+msgid "Floating Links"
+msgstr "Liens flottants"
+
+#: inc/admin-setting.php:24
+msgid "Enable rating"
+msgstr "Activer l'évaluation"
+
+#: inc/admin-setting.php:33
+msgid "Show average rating"
+msgstr "Afficher note moyenne"
+
+#: inc/admin-setting.php:37
+msgid "Add the_tags() function after title if average rating is not shown"
+msgstr ""
+"Ajoutez la fonction the_tags () après le titre si la note moyenne n’est pas "
+"affichée"
+
+#: inc/admin-setting.php:38
+msgid "You can also use shortcode [wppr_avg_rating] to show average rating"
+msgstr ""
+"Vous pouvez également utiliser shortcode [wppr_avg_rating] pour afficher la "
+"note moyenne"
+
+#: inc/admin-setting.php:44
+msgid "Rating label"
+msgstr "Étiquette de notation"
+
+#: inc/admin-setting.php:53
+msgid "Rating label Color"
+msgstr "Étiquette d'évaluation Couleur"
+
+#: inc/admin-setting.php:62
+msgid "Enable Google Rich Snippets?"
+msgstr "Activer les extraits enrichis Google?"
+
+#: inc/admin-setting.php:75
+msgid "Rating Image"
+msgstr "Image d'évaluation"
+
+#: inc/admin-setting.php:95
+msgid "Empty stars color"
+msgstr "Couleur des étoiles vides"
+
+#: inc/admin-setting.php:108
+msgid "Filled stars color"
+msgstr "Étoiles remplies couleur"
+
+#: inc/admin-setting.php:121
+msgid "Selected stars color"
+msgstr "Couleur des étoiles sélectionnées"
+
+#: inc/admin-setting.php:134
+msgid "Star size"
+msgstr "Taille étoile"
+
+#: inc/admin-setting.php:137 inc/admin-setting.php:200
+msgid "px"
+msgstr "px"
+
+#: inc/admin-setting.php:146
+msgid "Show average rating as"
+msgstr "Afficher la note moyenne en tant que"
+
+#: inc/admin-setting.php:155
+msgid "Inline"
+msgstr "En ligne"
+
+#: inc/admin-setting.php:161
+msgid "Average rating text"
+msgstr "Texte d'évaluation moyen"
+
+#: inc/admin-setting.php:169
+msgid "Tooltip background color"
+msgstr "Couleur de fond de l'info-bulle"
+
+#: inc/admin-setting.php:183
+msgid "Tooltip text color"
+msgstr "Couleur du texte de l'info-bulle"
+
+#: inc/admin-setting.php:197
+msgid "Tooltip text size"
+msgstr "Taille du texte de l'info-bulle"
+
+#: inc/admin-setting.php:213
+msgid "Enable next/prev links?"
+msgstr "Activer les liens next / prev?"
+
+#: inc/admin-setting.php:224
+msgid "Enable social share links?"
+msgstr "Activer les liens de partage social?"
+
+#: inc/admin-setting.php:236
+msgid "Position"
+msgstr "Position"
+
+#: inc/admin-setting.php:241
+msgid "Left"
+msgstr "La gauche"
+
+#: inc/admin-setting.php:245
+msgid "Right"
+msgstr "Droite"
+
+#: inc/admin-setting.php:264 inc/message.php:4
+#, php-format
+msgid "Thank you for using WP Post Rating. Please rate %s"
+msgstr "Merci d’utiliser WP Post Rating. S'il vous plaît noter% s"
+
+#: inc/function.php:18
+msgid "Please rate"
+msgstr "Veuillez noter s'il vous plaît"
+
+#: inc/function.php:21
+msgid "Very bad"
+msgstr "Très mauvais"
+
+#: inc/function.php:22
+msgid "Kinda bad"
+msgstr "Un peu mauvais"
+
+#: inc/function.php:23
+msgid "Meh"
+msgstr "Meh"
+
+#: inc/function.php:24
+msgid "Pretty good"
+msgstr "Assez bon"
+
+#: inc/function.php:25
+msgid "Rocks!"
+msgstr "Roches!"
+
+#: inc/function.php:63
+msgid ""
+"Error: You did not add your rating. Hit the BACK button of your Web browser "
+"and resubmit your comment with rating."
+msgstr ""
+"Erreur: vous n'avez pas ajouté votre note. Appuyez sur le bouton RETOUR de "
+"votre navigateur Web et soumettez votre commentaire avec évaluation."
+
+#: inc/function.php:109 inc/shortcodes.php:46
+msgid "Average"
+msgstr "Moyenne"
+
+#: inc/function.php:115 inc/shortcodes.php:51
+msgid "average"
+msgstr "moyenne"
+
+#: inc/function.php:116 inc/shortcodes.php:52
+msgid "out of 5. Total"
+msgstr "sur 5. Total"
