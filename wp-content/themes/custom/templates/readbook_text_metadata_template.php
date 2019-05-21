@@ -60,7 +60,7 @@ $tmt_points = get_children(array(
 <?php if($tmt_points_preview) : ?>
 <ul class="POI-previews">
 	<?php $i = 0; foreach ($tmt_points as $tmt_point) : if ($i > 3) { echo "<li>...</li>"; break; } ?>
-		<li><a href="<?php echo $document_point->guid; ?>" class="title point-title"><?php echo $document_point->post_title; ?></a></li>
+		<li><a href="<?php echo $tmt_point->guid; ?>" class="title point-title"><?php echo $tmt_point->post_title; ?></a></li>
 	<?php ++$i; endforeach; ?>
 </ul>
 <?php endif; ?>
