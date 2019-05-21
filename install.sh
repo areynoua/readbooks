@@ -25,7 +25,8 @@ rm wordpress-5.1.1.tar.gz
 mv -n wordpress/* ./
 
 # Config part
-echo "define('DB_NAME', '$db_name');
+echo "<?php
+define('DB_NAME', '$db_name');
 define('DB_USER', '$db_username');
 define('DB_PASSWORD', '$db_password');
 define('DB_HOST', '$db_host');

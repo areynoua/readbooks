@@ -9,6 +9,7 @@ wp-content/themes/twenty*/
 
 # IDE + User file
 .*
+!.htaccess
 backupDatabase.sh
 
 # Default Wordpress file
