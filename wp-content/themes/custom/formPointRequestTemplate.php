@@ -47,9 +47,9 @@ $parent_documentInfos = get_post($parent_document);
             <?php
             echo '<div class="msg-success money-bonus">';
             if(wp_get_current_user()->data->ID != $postInfos->post_author) {
-                echo 'By answering this request, you will earn <b>' . ($MONEY_POINT_APPROUVED+$MONEY_POINT_REPLY_REQUEST) . ' €</b> when your position is approuved';
+                echo 'By answering this request, you will earn <b>' . ($MONEY_POINT_APPROUVED+$MONEY_POINT_REPLY_REQUEST) . ' credits</b> when your position is approuved';
             } else {
-                echo 'If your point of interest is approved (an average of more than ' . $APPROUVED_MIN_SCORE . '/5 with at least '. $APPROUVED_MIN_COMMENT .' comments), you will earn <b>'.$MONEY_POINT_APPROUVED.' €</b>';
+                echo 'If your point of interest is approved (an average of more than ' . $APPROUVED_MIN_SCORE . '/5 with at least '. $APPROUVED_MIN_COMMENT .' comments), you will earn <b>'.$MONEY_POINT_APPROUVED.' credits</b>';
             }
             echo '</div>';?>
 

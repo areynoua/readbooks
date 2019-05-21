@@ -32,6 +32,13 @@
         $childrenRequestPoint = get_children($argsFetchRequestPoint);
 
         ?>
+		
+		
+		<ul class="inner-nav">
+			<li><p><a href="#document-search">Points of interest</a></p></li>
+			<li><p><a href="#requests">POI requests</a></p></li>
+			<li><p><a href="#new_doc_form">Add a / Request for POI</a></p></li>
+		</ul>
 
         <?php if(!empty($childrenDocumentPoint) || !empty($childrenRequestPoint)) { ?>
         <div style="margin-top: 10px;">
@@ -42,7 +49,7 @@
         $listCategory = get_list_category_of_document($post->ID);
         if(!empty($listCategory)) { ?>
             <div><br />
-                Select categories: 
+                Filter: 
                 <?php foreach ($listCategory as $category) {
                     $color = get_category_color($category);
                     echo '<span class="badge badge-pill category-button selective" ' . 
@@ -81,7 +88,7 @@
                 <div class="content">
                     <header>
                         <?php if(get_post_meta($document_point_id, 'point_approved', true) == 1) {
-                            echo '<span class="approved-icon" title="approved">V</span>';
+                            echo '<span class="approved-icon" title="approved"><i class="fa fa-star"></i></span>';
                         } ?>
                         <a href="<?php echo $document_point_link; ?>" class="title"><?php echo $document_point->post_title; ?></a>
                         <div class="meta">
@@ -117,7 +124,7 @@
 
             <?php
             if(!empty($childrenRequestPoint)) {
-                echo '<div><h4>Request point of interests</h4>';
+                echo '<div><h4 id="requests">Request point of interests</h4>';
 
                 $listSkill = get_list_skill_of_request_list($childrenRequestPoint);
                 if(!empty($listSkill)) {
@@ -199,6 +206,10 @@
     				<h2>
     					Add a point of interest
     				</h2>
+                    <div class="warning-protected-content">
+                        <b>Remark:</b><br />
+                        By posting a comment, you agree not to violate any intellectual law. This includes not using proprietary content and quote sources.
+                    </div>
     				<?php Ninja_Forms()->display(7); ?>
     			</div>
 

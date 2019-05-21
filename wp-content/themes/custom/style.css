@@ -205,6 +205,17 @@ h1, h2, h3, h4, h5, h6,
 	}
 }
 
+/* inner links */
+ul.inner-nav {
+	display: flex;
+	padding: 0;
+	width: 100%;
+	justify-content: space-around;
+	background: #F8F8F8;
+	border-bottom: 0.5px dotted lightgray;
+	margin: 0;
+}
+
 /* single book summaries */
 #main-content article.summary {
 	position: relative;
@@ -242,6 +253,11 @@ h1, h2, h3, h4, h5, h6,
 #main-content article.summary .title {
 	font-weight: 400;
 	margin-right: 3ch;
+	color: blue;
+}
+#main-content article.summary .title:hover {
+	color: darkgrey;
+	text-decoration: none;
 }
 #main-content article.summary .pre-title {
 	display: none;
@@ -479,8 +495,19 @@ input.point-search {
 }
 
 .approved-icon {
-    background-color: #8bc34a;
-    color: white;
-    padding: 3px 10px;
-    border-radius: 50px;
+    color: goldenrod;
+	text-shadow: goldenrod 0 0 10px;
+}
+.article-container.post article .approved-icon > i {
+	font-style: normal;
+}
+
+.warning-protected-content {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    padding: 0.3rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
 }

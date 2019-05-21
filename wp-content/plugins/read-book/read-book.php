@@ -498,6 +498,10 @@ function submit_document_callback($form_data) {
             case 'text_date':
                 $text_date = $field['value'];
                 break;
+
+            case 'text_first_date':
+                $text_first_date = $field['value'];
+                break;
         }
     }
 
@@ -516,6 +520,7 @@ function submit_document_callback($form_data) {
     $insertElement = wp_insert_post($postarr);
     add_post_meta($insertElement, 'text_author', $text_author);
     add_post_meta($insertElement, 'text_date', $text_date);
+    add_post_meta($insertElement, 'text_first_date', $text_first_date);
     if(isset($text_link)) {
         add_post_meta($insertElement, 'text_link', $text_link);
     }
