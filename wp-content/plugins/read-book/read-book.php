@@ -9,12 +9,22 @@
 
 $GOOGLE_KEY = 'AIzaSyCclMD62R4J9hv6SSzPznRjpP6MNWtG6Sg';
 $PREVIEW_LEN = 200;
+$LIST_COLOR = array(
+                '#f44f4f', // red
+                '#78d53d', // green
+                '#f4d84f', // yellow
+                '#8585ff', // blue
+                '#db4ff4', // purple
+                '#4ff4d6', // aqua
+                '#f4aa4f', // orange
+                '#250bfa'); // dark blue
 
 $APPROUVED_MIN_COMMENT = 5;
 $APPROUVED_MIN_SCORE = 3;
 
 $MONEY_POINT_APPROUVED = 1; // In euro
 $MONEY_POINT_POSITIVE_COMMENT = 0.1;
+$MONEY_POINT_REPLY_REQUEST = 0.5;
 $MONEY_POSITIVE_COMMENT = 0.25;
 
 
@@ -188,7 +198,29 @@ function register_cpt_document_point_request() {
  
     register_post_type('point_request', $args);
 }
-add_action('init', 'register_cpt_document_point_request');
+
+function skills_taxonomy() {
+    register_taxonomy(
+        'Skills',
+        'point_request',
+        array(
+            'hierarchical' => false,
+            'label' => 'Skills',
+            'query_var' => true,
+        'public' => true,
+            'rewrite' => array(
+                'slug' => 'skills',
+                'with_front' => false
+            )
+        )
+    );
+}
+
+function init_document_point_request() {
+    register_cpt_document_point_request();
+    skills_taxonomy();
+}
+add_action('init', 'init_document_point_request');
 
 
 ///////////////// PARENT POST TYPE MANAGEMENT /////////////////
@@ -265,7 +297,7 @@ add_action('pre_get_posts','wpc_cpt_in_home');
 function wpc_cpt_in_search($query) {
     if (! is_admin() && $query->is_main_query()) {
         if ($query->is_search) {
-            $query->set('post_type', array('post', 'document_point', 'document_point_request', 'document'));
+            $query->set('post_type', array('post', 'document_point', 'point_request', 'document'));
         }
     }
 }
@@ -357,6 +389,10 @@ function submit_document_point_callback($form_data) {
                 $point_id = $field['value'];
                 break;
 
+            case 'request_id':
+                $request_id = $field['value'];
+                break;
+
         }
     }
 
@@ -394,13 +430,22 @@ function submit_document_point_callback($form_data) {
     } else {
         $insertElement = wp_insert_post($postarr);
         add_post_meta($insertElement, 'point_approved', 0);
-        add_post_meta($insertElement, 'was_request', 0);
         add_post_meta($insertElement, 'document_parent', $text_id);
         if(isset($point_category)) {
             foreach (explode(",", $point_category) as $category) {
                 add_post_meta($insertElement, 'category', strtolower(trim($category)));
             }
         }
+
+        $was_request = 0;
+        if(isset($request_id) && $request_id != "" && $request_id != 0) {
+            $requestPostInfos = get_post($request_id);
+            if(wp_get_current_user()->data->ID != $requestPostInfos->post_author) {
+                $was_request = 1;
+            }
+            wp_delete_post($request_id);
+        }
+        add_post_meta($insertElement, 'was_request', $was_request);
     }
 
 }
@@ -525,6 +570,65 @@ function submit_document_callback($form_data) {
 }
 add_action('submit_document', 'submit_document_callback');
 
+function submit_document_point_request_callback($form_data) {
+    global $ninja_forms_processing;
+    $form_fields = $form_data['fields'];
+
+    /*
+    point_title
+    text_id
+    point_category
+    */
+
+    foreach($form_fields as $field){
+        // $field_id    = $field['id'];
+        // $field_key   = $field['key'];
+        // $field_value = $field['value'];
+
+        switch ($field['key']) {
+            case 'point_title':
+                $point_title = $field['value'];
+                break;
+
+            case 'point_category':
+                $point_category = $field['value'];
+                break;
+
+            case 'text_id':
+                $text_id = $field['value'];
+                break;
+
+            case 'request_skill':
+                $request_skill = $field['value'];
+                break;
+        }
+    }
+
+    $postarr = array(
+            'post_content' => "",
+            'post_title' => $point_title,
+            'post_type' => 'point_request',
+            'post_status' => 'publish',
+            'post_parent' => $text_id
+        );
+    if(isset($request_skill) && $request_skill != "") {
+        $postarr['tax_input'] = array('Skills' => $request_skill);
+    }
+    
+    $insertElement = wp_insert_post($postarr);
+    add_post_meta($insertElement, 'document_parent', $text_id);
+    if(isset($point_category)) {
+        foreach (explode(",", $point_category) as $category) {
+            $newCategory = strtolower(trim($category));
+            if($newCategory != "") {
+                add_post_meta($insertElement, 'category', $newCategory);
+            }
+        }
+    }
+}
+add_action('submit_document_point_request', 'submit_document_point_request_callback');
+
+
 
 function listTermsToText($listTerms, $pre_markup = '', $post_markup = '') {
     $res = "";
@@ -589,15 +693,21 @@ class wpb_widget extends WP_Widget {
         echo $args['before_widget'];
         if(!is_user_logged_in()) {
             $text_title = 'Register/Login';
-            $text_text = "<p style=\"text-align: center;\">" .
-                        "<a href=\"" . get_site_url() . "/my-account\">Login</a> " .
-                        "<a href=\"" . get_site_url() . "/registration\">Register</a>".
-                        "</p>";
+            $text_text = '<p class="login-register-link">' .
+                         '<a class="login-link" href="' . get_site_url() . '/my-account">Login</a> ' .
+                         '<a class="register-link" href="' . get_site_url() . '/registration">Register</a>' .
+                         '</p>';
         } else {
             $text_title = 'Account';
-            $text_text = "<p>You have: " . get_the_author_meta('money', get_current_user_id()) . "€</p>";
-            $text_text .= "<p><a href=\"" . get_site_url() . "/my-account\">Edit account</a> ".
-                    "<a href=\"" . get_site_url() . "/my-account/user-logout/\">Log out</a></p>";
+			$text_text = '<div class="account-widget-content">'
+				. '<p>Logged as: <a class="account-link" href="' . get_site_url() . '/my-account">'
+				. wp_get_current_user()->user_login
+				. '</a> '
+				. '(<a class="logout-link" href="' . get_site_url() . '/my-account/user-logout/">Log out</a>)'
+				. '</p>'
+				. '<p class="money-account">Balance: '
+				. get_the_author_meta('money', get_current_user_id())
+				. ' Credits</p></div>';
         }
 
         $title = apply_filters('widget_title', $text_title);
@@ -649,6 +759,7 @@ function comment_post_callback($comment_ID) {
     global $APPROUVED_MIN_SCORE;
     global $MONEY_POINT_APPROUVED;
     global $MONEY_POINT_POSITIVE_COMMENT;
+    global $MONEY_POINT_REPLY_REQUEST;
 
     $infoComment = get_comment($comment_ID);
     $parentPost = $infoComment->comment_post_ID;
@@ -657,9 +768,14 @@ function comment_post_callback($comment_ID) {
         $numComment = count(get_comments(array('post_id' => $parentPost, 'parent' => 0)));
         
         if($numComment >= $APPROUVED_MIN_COMMENT and get_post_score($parentPost) >= $APPROUVED_MIN_SCORE) {
-            $parentPostInfo = get_post($parentPost);
             update_post_meta($parentPost, 'point_approved', 1);
-            addUserMoney($parentPostInfo->post_author, $MONEY_POINT_APPROUVED);
+            $moneyToGive = $MONEY_POINT_APPROUVED;
+            if(get_post_meta($parentPost, 'was_request', true) == 1) {
+                $moneyToGive += $MONEY_POINT_REPLY_REQUEST;
+            }
+
+            $parentPostInfo = get_post($parentPost);
+            addUserMoney($parentPostInfo->post_author, $moneyToGive);
         }
     } else { // Check the rate
         $rates = get_comment_meta($comment_ID, 'rating', true);
@@ -699,10 +815,19 @@ function get_list_category_of_document($document_id) {
     return array_column($listCategory, 'meta_value');
 }
 
+function get_all_categories() {
+    global $wpdb;
+    $request = "SELECT DISTINCT meta_value " .
+        "FROM wp_postmeta " .
+        "WHERE meta_key = 'category'";
+    $listCategory = $wpdb->get_results($request, ARRAY_A);
+    return array_column($listCategory, 'meta_value');
+}
+
 function get_category_color($category_name) {
-    $listColor = array('#f44f4f', '#78d53d', '#f4d84f', '#8585ff', '#db4ff4');
-    $num = ord(substr($category_name, 0, 1))%count($listColor);
-    return $listColor[$num];
+    global $LIST_COLOR;
+    $num = ord(substr($category_name, 0, 1))%count($LIST_COLOR);
+    return $LIST_COLOR[$num];
 }
 
 function get_post_score($postId) {
@@ -766,6 +891,18 @@ function format_preview_text($text) {
 function addUserMoney($userId, $moneyToAdd) {
     $newMoneyValue = get_user_meta($userId, 'money', true) + $moneyToAdd;
     update_user_meta($userId, 'money', $newMoneyValue);
+}
+
+function get_list_skill_of_request_list($requestList) {
+    $result = array();
+    foreach ($requestList as $request) {
+        $skillInfo = wp_get_post_terms($request->ID, 'Skills', true);
+        if(!empty($skillInfo)) {
+            $skillInfo = $skillInfo[0];
+            $result[$skillInfo->slug] = $skillInfo->name;
+        }
+    }
+    return $result;
 }
 
 

@@ -26,7 +26,7 @@
         </div>
         <?php
         if(wp_get_current_user()->data->ID == get_the_author_meta('ID')) {
-            echo '<a href="http://readbook.ddns.net/edit-point/?id='.$post->ID.'">Edit</a>';
+            echo '<a href="'.get_site_url().'/edit-point/?id='.$post->ID.'">Edit</a>';
         }
         ?>
 

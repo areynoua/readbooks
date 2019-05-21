@@ -6,6 +6,10 @@ Template: book-rev-lite
 Version: 1.0.0
 */
 
+* {
+	font-family: "Titillium Web", sans-serif;
+}
+
 .form-container h2,
 .title {
 	font-family: "Arvo", sans-serif;
@@ -287,6 +291,15 @@ Version: 1.0.0
 	float: right;
 }
 
+/* widget */
+
+.widget .account-widget-content {
+	padding: 20px 15px;
+}
+.widget .account-widget-content > * {
+	margin: 0 0 0.4em 0;
+}
+
 /*
 .summary-details>.col {
     display: inline-block;
@@ -332,13 +345,18 @@ Version: 1.0.0
 
 
 /* ----- CUSTOM ----- */
-.category-button {
+.category-button, .skill-button {
 	margin: 0px 3px;
 	color: white;
 }
 
-.category-button.selective {
+.category-button.selective, .skill-button.selective {
 	cursor: pointer;
+}
+
+.skill-button, .skill-button>.unselect {
+    background-color: #6c757d;
+    border: 1px solid #6c757d;
 }
 
 .badge {
@@ -358,6 +376,16 @@ Version: 1.0.0
     padding-right: .6em;
     padding-left: .6em;
     border-radius: 10rem;
+}
+
+.skill-button {
+    border-radius: 3px;
+}
+
+.badge-pill>.unselect {
+    color: white;
+    padding: 0px 3px;
+    border-radius: 40px;
 }
 
 .tabcontent {
@@ -395,3 +423,39 @@ ul.tab li span.active {
     border-color: #dee2e6 #dee2e6 #fff;
 }
 
+.msg-success.money-bonus {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    border-radius: .25rem;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Category autocomplete */
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+
+input.point-search {
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #DADADA;
+    box-shadow: none;
+    padding: 5px 15px;
+    font-family: "Titillium Web", sans-serif;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    color: #65564e;
+    width: 100%;
+}
+
+.approved-icon {
+    background-color: #8bc34a;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 50px;
+}

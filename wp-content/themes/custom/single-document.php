@@ -1,4 +1,5 @@
 <?php get_header(); ?>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <!-- single-document Theme -->
 <section id="main-content" class="clearfix">
     <section id="main-content-inner" class="container">
@@ -13,6 +14,31 @@
         </header>
 
         <?php
+        $argsFetchDocumentPoint = array(
+            'post_parent' => $post->ID,
+            'post_type'   => 'document_point', 
+            'numberposts' => -1,
+            'post_status' => 'any' 
+        );
+        $childrenDocumentPoint = get_children($argsFetchDocumentPoint);
+        $childrenDocumentPoint = order_post_by_score($childrenDocumentPoint);
+
+        $argsFetchRequestPoint = array(
+            'post_parent' => $post->ID,
+            'post_type'   => 'point_request', 
+            'numberposts' => -1,
+            'post_status' => 'any' 
+        );
+        $childrenRequestPoint = get_children($argsFetchRequestPoint);
+
+        ?>
+
+        <?php if(!empty($childrenDocumentPoint) || !empty($childrenRequestPoint)) { ?>
+        <div style="margin-top: 10px;">
+            <input type="text" value="" class="point-search" id="document-search" placeholder="Search point of interest"  />
+        </div>
+        <?php }
+
         $listCategory = get_list_category_of_document($post->ID);
         if(!empty($listCategory)) { ?>
             <div><br />
@@ -23,34 +49,24 @@
                                 'data-selected="false" data-category="'.$category.'" '.
                                 'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
                             ucfirst($category) .
-                            ' <span class="unselect" style="display: none;">x</span>' .
+                            ' <span class="unselect" style="display: none;background-color: ' . $color . '">x</span>' .
                         '</span>';
                 }?>
                 <br />
             </div>
-        <?php } ?>
-
-        <div>
-            <input type="text" value="" placeholder="Search point of interest" />
-        </div>
+        <?php }
         
-<?php
-$args = array(
-	'post_parent' => $post->ID,
-	'post_type'   => 'document_point', 
-	'numberposts' => -1,
-	'post_status' => 'any' 
-);
-$children = get_children($args);
-$children = order_post_by_score($children);
-foreach ($children as $document_point) { 
-  $document_point_id = $document_point->ID;
-  $document_point_link = $document_point->guid;
-  $document_point_author_id = $document_point->post_author;
-  $authorInfo = get_user_by('id', $document_point_author_id);
-  $document_point_author_name = $authorInfo->data->display_name;
-  $listCategory = get_post_meta($document_point_id, 'category');
-?>
+        if(count($childrenDocumentPoint) > 0) {
+            echo '<h4>Point of interests</h4>';
+        }
+        foreach ($childrenDocumentPoint as $document_point) { 
+            $document_point_id = $document_point->ID;
+            $document_point_link = $document_point->guid;
+            $document_point_author_id = $document_point->post_author;
+            $authorInfo = get_user_by('id', $document_point_author_id);
+            $document_point_author_name = $authorInfo->data->display_name;
+            $listCategory = get_post_meta($document_point_id, 'category'); ?>
+
             <article class="clearfix summary document_point" data-category="<?php echo '[\''.implode('\',\'', $listCategory).'\']'; ?>">
 				<a href="<?php echo $document_point_link; ?>" class="title pre-title"><?php echo $document_point->post_title; ?></a>
                 <div class="feat-img">
@@ -65,12 +81,12 @@ foreach ($children as $document_point) {
                 <div class="content">
                     <header>
                         <?php if(get_post_meta($document_point_id, 'point_approved', true) == 1) {
-                            echo '[V]';
+                            echo '<span class="approved-icon" title="approved">V</span>';
                         } ?>
                         <a href="<?php echo $document_point_link; ?>" class="title"><?php echo $document_point->post_title; ?></a>
                         <div class="meta">
                             <span class="author"><?php echo $document_point_author_name; ?></span>
-                            <span class="date"><?php echo get_the_date(); ?></span>
+                            <span class="date"><?php echo get_the_date(get_option('date_format'), $document_point_id); ?></span>
                         </div><!-- end .meta -->
                     </header>
 					<div class="poi-content-excerpt">
@@ -98,8 +114,74 @@ foreach ($children as $document_point) {
                 </div><!-- end .content -->
             </article>
 			<?php } ?>
+
+            <?php
+            if(!empty($childrenRequestPoint)) {
+                echo '<div><h4>Request point of interests</h4>';
+
+                $listSkill = get_list_skill_of_request_list($childrenRequestPoint);
+                if(!empty($listSkill)) {
+                    echo '<div>';
+                    echo 'Select skills: ';
+                    foreach ($listSkill as $slug => $skillName) {
+                        echo '<span class="badge badge-pill skill-button selective" ' . 
+                                'data-selected="false" data-skill="'.$slug.'">' . 
+                            ucfirst($skillName) .
+                            ' <span class="unselect" style="display: none;">x</span>' .
+                        '</span>';
+                    }
+                    echo '</div>';
+                }
+
+                foreach ($childrenRequestPoint as $point_request) { 
+                    $point_request_id = $point_request->ID;
+                    $linkToCreate = get_site_url().'/reply-to-point-of-interest-request/?id='.$point_request_id;
+                    $point_request_author_id = $point_request->post_author;
+                    $authorInfo = get_user_by('id', $point_request_author_id);
+                    $point_request_author_name = $authorInfo->data->display_name;
+                    $listCategory = get_post_meta($point_request_id, 'category'); 
+                    $listSkills = wp_get_post_terms($point_request_id, 'Skills'); ?>
+                    <article class="clearfix summary document_point" 
+                            data-category="<?php echo '[\''.implode('\',\'', $listCategory).'\']'; ?>" 
+                            data-skill="<?php echo (empty($listSkills)) ? '' : $listSkills[0]->slug; ?>"
+                            id="request-<?php echo $point_request_id ?>">
+                        <a href="<?php echo $linkToCreate; ?>" class="title pre-title"><?php echo $point_request->post_title; ?></a>
+                        <div class="content">
+                            <header>
+                                <a href="<?php echo $linkToCreate; ?>" class="title"><?php echo $point_request->post_title; ?></a>
+                                <div class="meta">
+                                    <span class="author"><?php echo $point_request_author_name; ?></span>
+                                    <span class="date"><?php echo get_the_date(get_option('date_format'), $point_request_id); ?></span>
+                                </div><!-- end .meta -->
+                            </header>
+                            <div>
+                                <?php foreach ($listCategory as $category) {
+                                    $color = get_category_color($category);
+                                    echo '<span class="badge badge-pill category-button" ' . 
+                                                'data-selected="false" data-category="'.$category.'" '.
+                                                'style="border: 1px solid ' . $color . ';background-color: ' . $color . ';">' . 
+                                            ucfirst($category) .
+                                            ' <span class="unselect" style="display: none;">x</span>' .
+                                        '</span>';
+                                } ?>
+                            </div>
+                            <?php 
+                            if(!empty($listSkills)) {
+                                echo '<div>';
+                                echo '<b>Required skill:</b> ';
+                                echo listTermsToText($listSkills,
+                                    '<a href="' . get_site_url() . '/skills/%term%/">',
+                                    '</a>');
+                                echo '</div>';
+                            }
+                            ?>
+                        </div><!-- end .content -->
+                    </article>
+                <?php }
+                echo '</div>';
+            } ?>
 		      
-            <div class="form-container">
+            <div class="form-container" id="new_doc_form">
                 <ul class="tab">
                     <li class="tablinks document_point" onclick="openTab(event, 'document_point')">
                         <span class="active">
@@ -128,17 +210,7 @@ foreach ($children as $document_point) {
                 </div>
             </div>
 
-<?php	
-// DEBUG
-//echo '<pre>';
-//print_r($children);
-//echo '</pre>';
-// echo '<pre>';
-// print_r($authorInfo);
-// echo '</pre>';
-
-?>
-        <?php get_template_part("templates/bookrev_review_wrap_up_template"); ?>
+        <?php // get_template_part("templates/bookrev_review_wrap_up_template"); ?>
         <?php wp_link_pages(); ?>
 
         <?php endwhile; ?>
@@ -157,64 +229,115 @@ foreach ($children as $document_point) {
 <?php get_footer(); ?>
 
 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script>
 var postId = <?php echo $post->ID; ?>;
+var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"]'; ?>
+
 </script>
 <script src="<?php echo get_template_directory_uri(). "/../custom/js/form_point_document.js"; ?>"></script>
-nf-field-53
 <script>
     var listSelectCategory = []
+    var searchWord = "";
+    var selectSkill = "";
+    var selectSkillElement = null;
 
     $.each($('.category-button.selective'), function(k, buttonValue) {
         $(buttonValue).click(function() {
             var category = $(this).data('category')
             var selected = $(this).data('selected');
 
-            switchCategory($(this))
+            switchSelectElement($(this))
 
             // If the category was selected
             if(selected) {
                 // remove this category
-                listSelectCategory.pop(category)
+                console.log('before:')
+                console.log(listSelectCategory)
+                listSelectCategory.splice(listSelectCategory.indexOf(category), 1)
+                console.log('Pop:' + category)
             } else {
                 listSelectCategory.push(category)
             }
 
             console.log('Select ' + category + " -> " + selected + " [" + listSelectCategory + "]")
             // Test if select or not
-            $.each($('article.document_point'), function(k, pointValue) {
-                pointValue = $(pointValue);
-
-                if(listSelectCategory.length > 0) {
-                    var listPointCategory = eval(pointValue.data('category'));
-                    // If one category of this document_point is in the listSelectCategory
-                    if($(listPointCategory).filter(listSelectCategory).size() == listSelectCategory.length) {
-                        pointValue.show();
-                    } else {
-                        pointValue.hide();
-                    }
-                } else {
-                    pointValue.show();
-                }
-            }); 
+            hideOrShowPoint();
         });
     });
 
-    function switchCategory(categoryElement) {
+    function switchSelectElement(categoryElement) {
         var selected = categoryElement.data('selected');
         categoryElement.data('selected', !selected);
+        switchColorElement(categoryElement, selected)
+    }
+
+    function switchColorElement(selectElement, selected) {
         if(selected) {
-            var color = categoryElement.css('color');
-            categoryElement.css('color', 'white');
-            categoryElement.css('background-color', color);
-            categoryElement.find('.unselect').hide();
+            var color = selectElement.css('color');
+            selectElement.css('color', 'white');
+            selectElement.css('background-color', color);
+            selectElement.find('.unselect').hide();
         } else {
-            var color = categoryElement.css('background-color');
-            categoryElement.css('color', color);
-            categoryElement.css('background-color', 'white');
-            categoryElement.find('.unselect').show();
+            var color = selectElement.css('background-color');
+            selectElement.css('color', color);
+            selectElement.css('background-color', 'white');
+            selectElement.find('.unselect').show();
         }
     }
+
+
+    $.each($('.skill-button.selective'), function(k, buttonValue) {
+        $(buttonValue).click(function() {
+            var skill = $(this).data('skill')
+
+            if(selectSkill == skill) {
+                switchColorElement($(this), true)
+                selectSkill = "";
+                selectSkillElement = null;
+            } else {
+                if(selectSkillElement !== null) {
+                    switchColorElement(selectSkillElement, true);
+                }
+                switchColorElement($(this), false)
+                selectSkill = skill;
+                selectSkillElement = $(this);
+            }
+            // console.log('Select ' + category + " -> " + selected + " [" + listSelectCategory + "]")
+            // // Test if select or not
+            hideOrShowPoint();
+        });
+    });
+
+
+    function hideOrShowPoint() {
+        $("article.document_point").filter(function() {
+            $(this).toggle(
+                $(this).text().toLowerCase().indexOf(searchWord) > -1
+                &&
+                $(eval($(this).data('category'))).filter(listSelectCategory).size() == listSelectCategory.length
+                &&
+                ((typeof $(this).data('skill') === 'undefined' || 
+                    $(this).data('skill') == "" || 
+                    selectSkill == "") ? true : $(this).data('skill') == selectSkill));
+        });
+    }
+
+    $("#document-search").on("keyup", function() {
+        searchWord = $(this).val().toLowerCase();
+        hideOrShowPoint()
+        // $("article.document_point").filter(function() {
+        //     $(this).toggle(
+        //         $(this).text().toLowerCase().indexOf(value) > -1
+        //         &&
+        //         $(eval($(this).data('category'))).filter(listSelectCategory).size() == listSelectCategory.length);
+        // });
+      });
+
+    // $('#document-search').on('input',function(e){
+    //     console.log('change ! ' + $('#document-search').val());
+    //     hideOrShowPoint();
+    // });
 
 </script>
 
@@ -231,3 +354,4 @@ function openTab(evt, tabName) {
     $('.tablinks.'+tabName+' span').addClass('active');
 }
 </script>
+
