@@ -23,7 +23,6 @@ else : if ($post->post_type == 'document_point') :
 else :
 ?>
             <article class="clearfix">
-				<pre><?php print_r($post); ?></pre>
 
                 <div class="feat-img">
 
