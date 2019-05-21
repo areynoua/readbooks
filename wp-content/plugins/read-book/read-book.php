@@ -15,7 +15,7 @@ $LIST_COLOR = array(
                 '#f4d84f', // yellow
                 '#8585ff', // blue
                 '#db4ff4', // purple
-                '#4ff4d6', // aqua
+                '#00b0b0', // aqua
                 '#f4aa4f', // orange
                 '#250bfa'); // dark blue
 
@@ -297,7 +297,7 @@ add_action('pre_get_posts','wpc_cpt_in_home');
 function wpc_cpt_in_search($query) {
     if (! is_admin() && $query->is_main_query()) {
         if ($query->is_search) {
-            $query->set('post_type', array('post', 'document_point', 'point_request', 'document'));
+            $query->set('post_type', array('document_point', 'point_request', 'document'));
         }
     }
 }

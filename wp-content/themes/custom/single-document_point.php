@@ -13,6 +13,10 @@
 			require("templates/readbook_text_metadata_template.php");
 			?>
         </header>
+		<ul class="inner-nav">
+			<li><p><a href="#comments-section"><?php comments_number(__('No Comments','book-rev-lite'), __('One Comment','book-rev-lite'), __('% Comments','book-rev-lite')); ?></a></p></li>
+			<li><p><a href="#respond">Leave a reply</a></p></li>
+		</ul>
 
         <article <?php post_class("clearfix"); ?>>
             <?php if(get_post_meta($post->ID, 'text_img', true) != "") {

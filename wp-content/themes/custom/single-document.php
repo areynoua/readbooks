@@ -242,12 +242,12 @@ var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"
     var selectSkill = "";
     var selectSkillElement = null;
 
-    $.each($('.category-button.selective'), function(k, buttonValue) {
-        $(buttonValue).click(function() {
-            var category = $(this).data('category')
-            var selected = $(this).data('selected');
+    jQuery.each(jQuery('.category-button.selective'), function(k, buttonValue) {
+        jQuery(buttonValue).click(function() {
+            var category = jQuery(this).data('category')
+            var selected = jQuery(this).data('selected');
 
-            switchSelectElement($(this))
+            switchSelectElement(jQuery(this))
 
             // If the category was selected
             if(selected) {
@@ -287,21 +287,21 @@ var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"
     }
 
 
-    $.each($('.skill-button.selective'), function(k, buttonValue) {
-        $(buttonValue).click(function() {
-            var skill = $(this).data('skill')
+    jQuery.each(jQuery('.skill-button.selective'), function(k, buttonValue) {
+        jQuery(buttonValue).click(function() {
+            var skill = jQuery(this).data('skill')
 
             if(selectSkill == skill) {
-                switchColorElement($(this), true)
+                switchColorElement(jQuery(this), true)
                 selectSkill = "";
                 selectSkillElement = null;
             } else {
                 if(selectSkillElement !== null) {
                     switchColorElement(selectSkillElement, true);
                 }
-                switchColorElement($(this), false)
+                switchColorElement(jQuery(this), false)
                 selectSkill = skill;
-                selectSkillElement = $(this);
+                selectSkillElement = jQuery(this);
             }
             // console.log('Select ' + category + " -> " + selected + " [" + listSelectCategory + "]")
             // // Test if select or not
@@ -311,47 +311,35 @@ var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"
 
 
     function hideOrShowPoint() {
-        $("article.document_point").filter(function() {
-            $(this).toggle(
-                $(this).text().toLowerCase().indexOf(searchWord) > -1
+        jQuery("article.document_point").filter(function() {
+            jQuery(this).toggle(
+                jQuery(this).text().toLowerCase().indexOf(searchWord) > -1
                 &&
-                $(eval($(this).data('category'))).filter(listSelectCategory).size() == listSelectCategory.length
+                jQuery(eval(jQuery(this).data('category'))).filter(listSelectCategory).size() == listSelectCategory.length
                 &&
-                ((typeof $(this).data('skill') === 'undefined' || 
-                    $(this).data('skill') == "" || 
-                    selectSkill == "") ? true : $(this).data('skill') == selectSkill));
+                ((typeof jQuery(this).data('skill') === 'undefined' || 
+                    jQuery(this).data('skill') == "" || 
+                    selectSkill == "") ? true : jQuery(this).data('skill') == selectSkill));
         });
     }
 
-    $("#document-search").on("keyup", function() {
-        searchWord = $(this).val().toLowerCase();
+    jQuery("#document-search").on("keyup", function() {
+        searchWord = jQuery(this).val().toLowerCase();
         hideOrShowPoint()
-        // $("article.document_point").filter(function() {
-        //     $(this).toggle(
-        //         $(this).text().toLowerCase().indexOf(value) > -1
-        //         &&
-        //         $(eval($(this).data('category'))).filter(listSelectCategory).size() == listSelectCategory.length);
-        // });
       });
-
-    // $('#document-search').on('input',function(e){
-    //     console.log('change ! ' + $('#document-search').val());
-    //     hideOrShowPoint();
-    // });
-
 </script>
 
 <script>
 function openTab(evt, tabName) {
-    $.each($('.tabcontent'), function(k, tabContent) {
-        $(tabContent).hide();
+    jQuery.each(jQuery('.tabcontent'), function(k, tabContent) {
+        jQuery(tabContent).hide();
     });
-    $.each($('.tablinks span'), function(k, tabLink) {
-        $(tabLink).removeClass('active');
+    jQuery.each(jQuery('.tablinks span'), function(k, tabLink) {
+        jQuery(tabLink).removeClass('active');
     });
 
-    $('.tabcontent#'+tabName).show();
-    $('.tablinks.'+tabName+' span').addClass('active');
+    jQuery('.tabcontent#'+tabName).show();
+    jQuery('.tablinks.'+tabName+' span').addClass('active');
 }
 </script>
 

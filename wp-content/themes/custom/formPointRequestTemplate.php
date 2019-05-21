@@ -97,13 +97,13 @@ var availableTags = <?php echo '["' . implode('", "', get_all_categories()) . '"
 
 <script>
 function addInputOfPost() {
-    $("h1.title.form-title").text("Reply to request: \"<?php echo addslashes($postInfos->post_title); ?>\"");
+    jQuery("h1.title.form-title").text("Reply to request: \"<?php echo addslashes($postInfos->post_title); ?>\"");
     jQuery('#nf-field-44').val("<?php echo addslashes($postInfos->post_title); ?>");
     jQuery('#nf-field-46').val("<?php echo addslashes(implode(',', get_post_meta($postInfos->ID, 'category'))); ?>");
     jQuery('#nf-field-44').prop('disabled', true);
 }
 
-$(function() {
+jQuery(function() {
     setTimeout(addInputOfPost, 1000);
 });
 </script>
