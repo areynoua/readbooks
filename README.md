@@ -53,7 +53,25 @@ equivalent for similar distributions, such as Debian.
     SET option_value = '<host>'
     WHERE option_name = 'siteurl' OR option_name = 'home';
 
+    UPDATE wp_posts 
+    SET guid = REPLACE(meta_value, 'http://readbook.ddns.net', '$host_url');
+
+    UPDATE wp_postmeta 
+    SET meta_value = REPLACE(meta_value, 'http://readbook.ddns.net', '$host_url');
+    ```
+    * The owner email address
+    ```SQL
     UPDATE wp_options 
     SET option_value = '<admin email>' 
     WHERE option_name = 'admin_email' OR option_name = 'new_admin_email';
+    ```
+    * The ReCaptcha key (check here: https://www.google.com/recaptcha/admin/ )
+    ```SQL
+    UPDATE wp_options
+    SET option_value = '<site key>'
+    WHERE option_name = 'user_registration_integration_setting_recaptcha_site_key';
+
+    UPDATE wp_options
+    SET option_value = '<secret key>'
+    WHERE option_name = 'user_registration_integration_setting_recaptcha_site_secret';
     ```

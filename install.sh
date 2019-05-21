@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Host configuration"
-echo -n "Host url: "
+echo -n "Host url (without final '/'): "
 read host_url
 echo -n "Admin email: "
 read email_admin
@@ -42,3 +42,18 @@ echo "require_once(ABSPATH . 'wp-settings.php');" >> wp-config.php
 
 mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_options SET option_value = '$host_url' WHERE option_name = 'siteurl' OR option_name = 'home';"
 mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_options SET option_value = '$email_admin' WHERE option_name = 'admin_email' OR option_name = 'new_admin_email';"
+
+mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_posts SET guid = REPLACE(guid, 'http://readbook.ddns.net', '$host_url');"
+mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, 'http://readbook.ddns.net', '$host_url');"
+
+echo "Google Captcha"
+echo -n "Site key: "
+read google_site_key
+echo -n "Secret key: "
+read google_secrete_key
+
+mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_options SET option_value = '$google_site_key' WHERE option_name = 'user_registration_integration_setting_recaptcha_site_key';"
+
+mysql -u $db_username -h $db_host --password=$db_password $db_name --execute="UPDATE wp_options SET option_value = '$google_secrete_key' WHERE option_name = 'user_registration_integration_setting_recaptcha_site_secret';"
+
+
