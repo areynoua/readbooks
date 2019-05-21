@@ -1,7 +1,6 @@
 <!-- templates/bookrev_articles_list_template.php -->
 <?php while( have_posts() ) : the_post(); ?>
-    <article class="clearfix" id="post-<?php the_ID(); ?>">
-            <article class="clearfix" id="post-<?php the_ID(); ?>">
+	<article class="clearfix book-metadata" id="post-<?php the_ID(); ?>">
             <?php 
                 $tmt = $post;
                 $link_to_book = true;
@@ -9,8 +8,6 @@
                 $tmt_cover_placeholder = true;
                 require("readbook_text_metadata_template.php");
             ?>
-    </article>
-
     </article>
 
 

@@ -18,10 +18,11 @@
             <?php if(get_post_meta($post->ID, 'text_img', true) != "") {
                 echo '<img class="text-img" src="' . get_post_meta($post->ID, 'text_img', true) . '" />';
             } ?>
+			<h1><?php the_title(); ?></h1>
             <?php the_content(); ?>
             
         <div class="article-tags">
-            Write by: <?php the_author(); ?>
+            Written by: <?php the_author(); ?>
         <?php the_tags( __( 'Tags: ', 'book-rev-lite' ), __( ', ', 'book-rev-lite' ), '<br />' ); ?> 
         </div>
         <?php
