@@ -22,6 +22,7 @@ $tmt_points = get_children(array(
 	'numberposts' => -1, 
 	'post_status' => 'any'
 ));
+$authorName = get_post_meta($tmt->ID, 'text_author', true);
 ?>
 <h1 class="title pre-title document-title"><?php echo $tmt_title; ?></h1>
 <?php if($link_to_book) echo $link_to_book; ?>
@@ -38,7 +39,7 @@ $tmt_points = get_children(array(
 	<!-- TODO make clickable (category and theme) to make automaticaly a research -->
 	<div class="author">
 		<span><i class="fa fa-pencil"></i> <span>Author:</span></span>
-		<span><a href="#"><?php echo get_post_meta($tmt->ID, 'text_author', true); ?></a></span>
+		<span><a href="<?php echo get_site_url() . "/?s=" . $authorName; ?>"><?php echo $authorName; ?></a></span>
 	</div>
 	<div class="date">
 		<span><i class="fa fa-calendar"></i> <span>Publication date:</span></span>
